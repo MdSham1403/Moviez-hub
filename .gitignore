@@ -43,3 +43,5 @@ staticfiles/
 *.bak
 *.swp
 *.lock
+
+db.sqlite3.backup
