@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* =========================================
+       1. LAYOUT & HEADER
+       ========================================= */
+    .directory-container {
+        padding-top: 20px;
+        padding-bottom: 100px;
+        background: radial-gradient(circle at top right, #1a1a1a, #080808);
+        min-height: 100vh;
+    }
+
+    /* Centered Home Button for Mobile */
+    .nav-vault-box {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 30px;
+    }
+
+    .nav-vault-link {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: 0.3s;
+    }
+
+    .nav-vault-link:hover {
+        color: #ffca28;
+        border-color: #ffca28;
+    }
+
+    .directory-title {
+        font-family: 'Cinzel', serif;
+        color: #ffca28;
+        letter-spacing: 4px;
+        text-shadow: 0 0 15px rgba(255, 202, 40, 0.2);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        font-size: 2rem;
+    }
+
+    /* =========================================
+       2. GLASS SEARCH PANEL
+       ========================================= */
+    .search-panel {
+        background: rgba(20, 20, 20, 0.7);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 202, 40, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .search-bar, .form-select-vault {
+        background: #000 !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+        border-radius: 12px !important;
+        height: 50px;
+        transition: 0.3s;
+    }
+
+    .search-bar:focus, .form-select-vault:focus {
+        border-color: #ffca28 !important;
+        box-shadow: 0 0 15px rgba(255, 202, 40, 0.1) !important;
+    }
+
+    .btn-search-vault {
+        background: linear-gradient(45deg, #ffca28, #b8860b);
+        color: #000;
+        border: none;
+        border-radius: 12px;
+        width: 100%;
+        height: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+
+    /* =========================================
+       3. SERIES CARDS (POSTER FOCUS)
+       ========================================= */
+    .vault-card {
+        background: #111;
+        border: 1px solid #222;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .vault-card:hover {
+        border-color: #ffca28;
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+    }
+
+    /* Fixed Aspect Ratio for Posters (Standard Movie Size) */
+    .poster-box {
+        position: relative;
+        width: 100%;
+        padding-top: 150%; /* 2:3 Aspect Ratio */
+        overflow: hidden;
+        background: #050505;
+    }
+
+    .vault-poster {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures image fills box without stretching */
+        transition: 0.5s;
+    }
+
+    .vault-card:hover .vault-poster {
+        transform: scale(1.1);
+    }
+
+    .card-meta {
+        padding: 15px;
+        text-align: center;
+        background: linear-gradient(to top, #000, #111);
+    }
+
+    .series-name {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        color: #fff;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+        height: 2.4em; /* Limits height to 2 lines */
+        overflow: hidden;
+
+        /* Older browser support */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+
+        /* Modern standard support (This fixes the warning) */
+        line-clamp: 2; 
+    }
+
+    .btn-access {
+        background: transparent;
+        color: #ffca28;
+        border: 1px solid #ffca28;
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: block;
+        transition: 0.3s;
+    }
+
+    .btn-access:hover {
+        background: #ffca28;
+        color: #000;
+    }
+
+    /* =========================================
+       4. MOBILE RESPONSIVENESS (6.67" Screen)
+       ========================================= */
+    @media (max-width: 768px) {
+        .nav-vault-box { justify-content: center; } /* Center Home button on mobile */
+        
+        .directory-title { font-size: 1.5rem; }
+        
+        .search-panel { padding: 15px; border-radius: 15px; }
+
+        /* 2 Cards per row on mobile is the best look */
+        .g-mobile-2 {
+            --bs-gutter-x: 10px; /* Tighter spacing for mobile */
+        }
+        
+        .series-name { font-size: 0.8rem; }
+    }
+
+    /* Animation */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
+<div class="directory-container">
+    <div class="container">
+        
+        <div class="nav-vault-box">
+            <a href="{% url 'home' %}" class="nav-vault-link">
+                <i class="fas fa-home me-2"></i> BACK TO HOME
+            </a>
+        </div>
+
+        <header class="text-center mb-5">
+            <h1 class="directory-title">Series Vault</h1>
+            <p class="text-white small text-uppercase" style="opacity: 0.7; letter-spacing: 2px;">Explore Premium Television</p>
+        </header>
+
+        <div class="search-panel">
+            <form id="series-search-form" method="GET" class="row g-3">
+                <div class="col-lg-5">
+                    <input type="text" name="search" class="form-control search-bar" placeholder="Search Title..." value="{{ request.GET.search }}">
+                </div>
+                <div class="col-6 col-lg-2">
+                    <select name="genre" class="form-select form-select-vault">
+                        <option value="">Genres</option>
+                        {% for genre in genres %}
+                        <option value="{{ genre }}" {% if request.GET.genre == genre %}selected{% endif %}>{{ genre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <select name="sort_by" class="form-select form-select-vault">
+                        <option value="">Sort</option>
+                        <option value="title_asc" {% if request.GET.sort_by == 'title_asc' %}selected{% endif %}>A-Z</option>
+                        <option value="release_year_desc" {% if request.GET.sort_by == 'release_year_desc' %}selected{% endif %}>Newest</option>
+                    </select>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <button type="submit" class="btn-search-vault">
+                        <i class="fas fa-search me-2"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="row g-4 g-mobile-2">
+            {% if series %}
+                {% for s in series %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="vault-card">
+                        <div class="poster-box">
+                            {% if s.poster %}
+                                <img src="{{ s.poster.url }}" alt="{{ s.title }}" class="vault-poster">
+                            {% else %}
+                                <img src="{% static 'images/default_poster.jpg' %}" alt="No Poster" class="vault-poster">
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-meta">
+                            <h5 class="series-name">{{ s.title }}</h5>
+                            <a href="{% url 'season_list' s.id %}" class="btn-access">
+                                View Seasons
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 border border-secondary rounded-4 bg-dark">
+                        <i class="fas fa-film fa-3x text-muted mb-3"></i>
+                        <h4 class="text-white">Nothing Found</h4>
+                        <p class="text-muted">Try a different search term.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

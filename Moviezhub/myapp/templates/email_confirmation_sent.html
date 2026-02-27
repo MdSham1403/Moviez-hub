@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .confirmation-sent-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .auth-card {
+        max-width: 550px;
+        width: 100%;
+        padding: 60px 40px;
+        text-align: center;
+    }
+
+    /* Cinematic Email Icon */
+    .icon-box {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 35px;
+    }
+
+    .icon-box i {
+        font-size: 4rem;
+        color: var(--gold);
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+    }
+
+    /* Pulsing background effect */
+    .icon-box::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+        transform: translate(-50%, -50%);
+        animation: pulseAura 3s infinite;
+    }
+
+    @keyframes pulseAura {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
+        100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+    }
+
+    .auth-title {
+        color: #fff;
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+
+    .auth-description {
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1.8;
+        margin-bottom: 30px;
+    }
+
+    /* Premium Link Styling */
+    .resend-box {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .resend-link {
+        color: var(--gold);
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+
+    .resend-link:hover {
+        color: #fff;
+        text-shadow: 0 0 10px var(--gold);
+    }
+</style>
+
+<div class="confirmation-sent-wrapper">
+    <div class="rich-card auth-card">
+        <div class="icon-box">
+            <i class="fas fa-paper-plane"></i>
+        </div>
+
+        <h2 class="auth-title">Authorization Pending</h2>
+        
+        <p class="auth-description">
+            A secure verification link has been dispatched to your inbox. 
+            Please authenticate your digital signature to unlock the <strong>Moviez Hub</strong> vault.
+        </p>
+
+        <div class="resend-box">
+            <p class="mb-2

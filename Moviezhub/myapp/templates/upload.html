@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🛸 Hub Layout */
+    .hub-container {
+        padding: 60px 20px;
+        min-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hub-header {
+        font-family: 'Cinzel', serif;
+        color: var(--gold);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .hub-subtitle {
+        color: #888;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 50px;
+    }
+
+    /* 🔍 Command Search */
+    .search-vault-box {
+        max-width: 600px;
+        width: 100%;
+        margin-bottom: 60px;
+    }
+
+    .search-input-vault {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid var(--border-glass) !important;
+        color: #fff !important;
+        border-radius: 50px !important;
+        padding: 15px 30px !important;
+        backdrop-filter: blur(10px);
+    }
+
+    .search-input-vault:focus {
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.1) !important;
+    }
+
+    /* 🎞️ Choice Cards */
+    .choice-card {
+        background: var(--slate-glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 30px;
+        padding: 40px;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .choice-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 4px;
+    }
+
+    /* Movie Accent */
+    .movie-card::before { background: linear-gradient(90deg, #3498db, transparent); }
+    .movie-card:hover { border-color: #3498db; box-shadow: 0 15px 40px rgba(52, 152, 219, 0.2); }
+    .icon-movie { color: #3498db; filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.4)); }
+
+    /* Series Accent */
+    .series-card::before { background: linear-gradient(90deg, #2ecc71, transparent); }
+    .series-card:hover { border-color: #2ecc71; box-shadow: 0 15px 40px rgba(46, 204, 113, 0.2); }
+    .icon-series { color: #2ecc71; filter: drop-shadow(0 0 10px rgba(46, 204, 113, 0.4)); }
+
+    .choice-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .card-title-vault {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        color: #fff;
+        margin-top: 20px;
+    }
+
+    /* 🔘 Buttons */
+    .btn-upload-vault {
+        border-radius: 50px;
+        padding: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 20px;
+        transition: 0.3s;
+    }
+
+    .btn-movie { background: #3498db; color: #fff !important; border: none; }
+    .btn-series { background: #2ecc71; color: #fff !important; border: none; }
+
+    .btn-upload-vault:hover {
+        filter: brightness(1.2);
+        transform: scale(1.02);
+    }
+
+    .home-vault-btn {
+        margin-top: 50px;
+        color: #666;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+
+    .home-vault-btn:hover { color: var(--gold); }
+</style>
+
+<div class="container hub-container">
+    
+    <header class="text-center">
+        <h2 class="hub-header">Ingestion Portal</h2>
+        <p class="hub-subtitle">Archive New Content to the Vault</p>
+    </header>
+
+    <div class="search-vault-box">
+        <form method="GET" action="{% url 'explore_movies' %}">
+            <div class="input-group">
+                <input type="text" class="form-control search-input-vault" placeholder="Verify existing records..." name="q">
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-4 justify-content-center w-100">
+        <div class="col-md-5 col-lg-4">
+            <div class="choice-card movie-card text-center">
+                <i class="bi bi-film display-3 icon-movie"></i>
+                <h4 class="card-title-vault">Single Feature</h4>
+                <p class="text-muted small">Ingest a standalone cinematic entry into the database.</p>
+                <a href="{% url 'upload_movie' %}" class="btn btn-upload-vault btn-movie w-100">
+                    Initialize Movie Upload
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-4">
+            <div class="choice-card series-card text-center">
+                <i class="bi bi-collection-play display-3 icon-series"></i>
+                <h4 class="card-title-vault">Multi-Part Series</h4>
+                <p class="text-muted small">Deploy a series structure with seasons and episodes.</p>
+                <a href="{% url 'upload_series' %}" class="btn btn-upload-vault btn-series w-100">
+                    Initialize Series Ingest
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'home' %}" class="home-vault-btn">
+        <i class="bi bi-house-door me-1"></i> RETURN TO MAIN TERMINAL
+    </a>
+</div>
+{% endblock %}

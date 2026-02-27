@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🛸 Terminal Layout */
+    .upload-wrapper {
+        padding: 50px 0;
+    }
+
+    .ingestion-card {
+        background: var(--slate-glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 25px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+
+    .ingestion-header {
+        background: rgba(255, 215, 0, 0.05);
+        border-bottom: 1px solid var(--border-glass);
+        padding: 25px;
+        text-align: center;
+    }
+
+    .ingestion-title {
+        font-family: 'Cinzel', serif;
+        color: var(--gold);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    /* 📝 Form Controls */
+    .form-label {
+        color: var(--gold);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .form-control, .form-textarea {
+        background: rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+        border-radius: 12px !important;
+        padding: 12px !important;
+    }
+
+    .form-control:focus {
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.2) !important;
+    }
+
+    /* 📦 Dynamic Sections (Seasons & Episodes) */
+    .season-section {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 215, 0, 0.1) !important;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .episode-section {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 15px;
+    }
+
+    .section-label {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        color: #fff;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    /* 🔘 Buttons */
+    .btn-vault-add {
+        color: var(--gold);
+        border: 1px dashed var(--gold);
+        background: transparent;
+        transition: 0.3s;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .btn-vault-add:hover {
+        background: rgba(255, 215, 0, 0.1);
+        color: #fff;
+    }
+
+    .btn-vault-submit {
+        background: var(--gold);
+        color: #000;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border: none;
+        border-radius: 50px;
+        padding: 15px;
+        transition: 0.3s;
+    }
+
+    .btn-vault-submit:hover {
+        background: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+    }
+</style>
+
+<div class="container upload-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card ingestion-card">
+                <div class="ingestion-header">
+                    <h3 class="ingestion-title">
+                        <i class="bi bi-shield-lock me-2"></i> Ingest New Series
+                    </h3>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-12">
+                                <label class="form-label">Series Title</label>
+                                <input type="text" name="series_title" class="form-control" placeholder="Archive Entry Name" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Series Description</label>
+                                <textarea name="series_description" class="form-control" rows="3" placeholder="Database Synopsis..." required></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="border-secondary opacity-25 mb-5">
+
+                        <div id="seasons-container">
+                            <div class="season-section" id="season-1">
+                                <span class="section-label text-gold"> <i class="bi bi-folder2-open me-2"></i> Season 01</span>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Season Identifier</label>
+                                    <input type="text" name="season_1_title" class="form-control" placeholder="e.g., The Beginning" required>
+                                </div>
+
+                                <div class="episodes-container" id="season-1-episodes">
+                                    <div class="episode-section" id="episode-1-1">
+                                        <span class="small text-muted text-uppercase fw-bold mb-3 d-block">Episode 01</span>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Title</label>
+                                                <input type="text" name="episode_1_1_title" class="form-control" placeholder="Ep name" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Source File</label>
+                                                <input type="file" name="episode_1_1_video" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-vault-add mt-3" onclick="addEpisode(1)">
+                                    <i class="bi bi-plus-circle me-1"></i> Add Episode
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-column gap-3 mt-4">
+                            <button type="button" class="btn btn-vault-add py-3" onclick="addSeason()">
+                                <i class="bi bi-plus-square-dotted me-2"></i> Deploy New Season Block
+                            </button>
+                            
+                            <button type="submit" class="btn btn-vault-submit mt-4">
+                                <i class="bi bi-cloud-arrow-up-fill me-2"></i> Finalize Ingestion
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<script>
+let seasonCount = 1;
+let episodeCount = { 1: 1 };
+
+function addSeason() {
+    seasonCount++;
+    episodeCount[seasonCount] = 1;
+
+    const container = document.getElementById('seasons-container');
+    const seasonDiv = document.createElement('div');
+    seasonDiv.className = 'season-section';
+    seasonDiv.id = `season-${seasonCount}`;
+    
+    seasonDiv.innerHTML = `
+        <span class="section-label text-gold"> <i class="bi bi-folder2-open me-2"></i> Season ${seasonCount.toString().padStart(2, '0')}</span>
+        <div class="mb-4">
+            <label class="form-label">Season Identifier</label>
+            <input type="text" name="season_${seasonCount}_title" class="form-control" required>
+        </div>
+        <div class="episodes-container" id="season-${seasonCount}-episodes">
+            <div class="episode-section" id="episode-${seasonCount}-1">
+                <span class="small text-muted text-uppercase fw-bold mb-3 d-block">Episode 01</span>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="episode_${seasonCount}_1_title" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Source File</label>
+                        <input type="file" name="episode_${seasonCount}_1_video" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-vault-add mt-3" onclick="addEpisode(${seasonCount})">
+            <i class="bi bi-plus-circle me-1"></i> Add Episode
+        </button>
+    `;
+    container.appendChild(seasonDiv);
+}
+
+function addEpisode(sId) {
+    episodeCount[sId]++;
+    const epId = episodeCount[sId];
+    const epContainer = document.getElementById(`season-${sId}-episodes`);
+    
+    const epDiv = document.createElement('div');
+    epDiv.className = 'episode-section';
+    epDiv.innerHTML = `
+        <span class="small text-muted text-uppercase fw-bold mb-3 d-block">Episode ${epId.toString().padStart(2, '0')}</span>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Title</label>
+                <input type="text" name="episode_${sId}_${epId}_title" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Source File</label>
+                <input type="file" name="episode_${sId}_${epId}_video" class="form-control" required>
+            </div>
+        </div>
+    `;
+    epContainer.appendChild(epDiv);
+}
+</script>
+{% endblock %}

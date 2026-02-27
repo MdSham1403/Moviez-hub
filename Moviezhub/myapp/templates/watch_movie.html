@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🎭 Theater Backdrop */
+    .theater-container {
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #1a1a1a 0%, #000 100%);
+        padding: 40px 0 100px;
+    }
+
+    .viewing-header {
+        font-family: 'Cinzel', serif;
+        color: #ffd700; /* Gold */
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 25px;
+        text-shadow: 0 0 15px rgba(255, 215, 0, .3);
+    }
+
+    /* 📺 Video Terminal Fix: Using aspect-ratio to prevent gaps */
+    .video-terminal {
+        max-width: 1100px;
+        margin: auto;
+        background: #000;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 215, 0, .2);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .9);
+        position: relative;
+        aspect-ratio: 16 / 9; /* Ensures the container is always the correct shape */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Ensure the player fills the terminal perfectly */
+    .plyr {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .plyr--video {
+        background: #000;
+    }
+
+    .quality-select {
+        max-width: 250px;
+        margin: 25px auto 0;
+    }
+
+    .back-link {
+        margin-top: 40px;
+        display: inline-block;
+        color: #ffd700;
+        text-decoration: none;
+        letter-spacing: 2px;
+        font-size: .8rem;
+        transition: 0.3s;
+    }
+
+    .back-link:hover {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+</style>
+
+<div class="theater-container">
+    <div class="container text-center">
+
+        <h2 class="viewing-header">
+            Now Projecting: {{ movie.title }}
+        </h2>
+
+        <div class="video-terminal">
+            {% if youtube_id %}
+                <div id="player" 
+                     data-plyr-provider="youtube" 
+                     data-plyr-embed-id="{{ youtube_id }}">
+                </div>
+
+            {% elif video_source_url %}
+                <video id="player" playsinline controls
+                    {% if movie.thumbnail %}
+                        poster="{{ movie.thumbnail.url }}"
+                    {% endif %}>
+                    <source src="{{ video_source_url }}" type="video/mp4">
+                </video>
+
+            {% else %}
+                <div class="p-5 text-danger">
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                    <h5>Media not found in the vault</h5>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if streams %}
+        <div class="quality-select">
+            <form method="get">
+                <select name="quality" class="form-select bg-dark text-white border-secondary" onchange="this.form.submit()">
+                    {% for s in streams %}
+                        <option value="{{ s.quality }}"
+                            {% if current_stream and s.id == current_stream.id %}selected{% endif %}>
+                            {{ s.quality }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        {% endif %}
+
+        <a href="{% url 'movie_detail' movie.id %}" class="back-link">
+            ← Return to Dossier
+        </a>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
+<script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    /**
+     * 1. CONFIGURATION
+     * We wrap Django variables in strings to satisfy the JS linter 
+     * and prevent the "Property assignment expected" red errors.
+     */
+    const config = {
+        streamUrl: "{% if current_stream %}{% url 'get_stream' current_stream.stream_id %}{% endif %}",
+        startTime: parseFloat("{{ last_position|default:0 }}"),
+        csrfToken: "{{ csrf_token }}"
+    };
+
+    const playerEl = document.getElementById("player");
+    if (!playerEl) return;
+
+    // 2. INITIALIZE PLYR
+    const player = new Plyr(playerEl, {
+        keyboard: { focused: true, global: true },
+        fullscreen: { iosNative: true },
+        ratio: '16:9',
+        settings: ['speed', 'quality']
+    });
+
+    /**
+     * 3. RESUME PLAYBACK
+     * Move to the last saved position once the player is ready.
+     */
+    player.on('ready', () => {
+        if (config.startTime > 5) {
+            console.log("Resuming from vault record: " + config.startTime + "s");
+            player.currentTime = config.startTime;
+        }
+    });
+
+    /**
+     * 4. HEARTBEAT SYSTEM
+     * Saves progress to the database every 5 seconds.
+     */
+    if (config.streamUrl) {
+        setInterval(() => {
+            // Only save if the video is playing and past the intro
+            if (!player.paused && player.currentTime > 5) {
+                fetch(config.streamUrl, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": config.csrfToken,
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    body: JSON.stringify({
+                        position: Math.floor(player.currentTime)
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log("Progress archived.");
+                    }
+                })
+                .catch(error => console.error('Archive sync failed:', error));
+            }
+        }, 5000);
+    }
+});
+</script>
+{% endblock %}

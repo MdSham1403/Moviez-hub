@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Premium dark gradient background */
+    body {
+        background: radial-gradient(circle at top right, #1a1a1a, #050505);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        padding: 40px 20px;
+    }
+
+    /* The Luxury Card */
+    .profile-rich-card {
+        background: rgba(20, 20, 20, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 215, 0, 0.15);
+        border-radius: 35px;
+        padding: 45px 35px;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+        position: relative;
+    }
+
+    .profile-title {
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+
+    /* Profile Image with Gold Glow */
+    .profile-image-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .profile-image-container img {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ffd700;
+        padding: 5px;
+        background: #111;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    }
+
+    /* Status Badge */
+    .member-badge {
+        background: linear-gradient(45deg, #ffd700, #b8860b);
+        color: #000;
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 4px 12px;
+        border-radius: 20px;
+        position: absolute;
+        bottom: 10px;
+        right: 0;
+        text-transform: uppercase;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Buttons */
+    .btn-gold-action {
+        display: inline-block;
+        background: linear-gradient(45deg, #ffd700, #b8860b);
+        color: #000;
+        padding: 10px 24px;
+        border-radius: 50px;
+        text-decoration: none !important;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(184, 134, 11, 0.2);
+    }
+
+    .btn-gold-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(184, 134, 11, 0.4);
+        filter: brightness(1.1);
+        color: #000;
+    }
+
+    /* Detail Rows */
+    .profile-details-list {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: left;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        margin-bottom: 30px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        gap: 20px; /* Forces space between label and value */
+        flex-wrap: wrap; /* Allows email to drop down if extremely long */
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .label-text {
+        color: #ffd700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        white-space: nowrap; /* Keeps 'Linked Email' on one line */
+    }
+
+    .value-text {
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 400;
+        text-align: right;
+        word-break: break-word; /* Prevents text from overflowing the card */
+        flex: 1; /* Allows value to take up remaining space */
+        min-width: 150px;
+    }
+
+    /* Navigation */
+    .btn-outline-home {
+        color: #888;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-outline-home:hover {
+        color: #ffd700;
+    }
+
+    /* Update the main card width for all screens */
+.profile-rich-card {
+    /* ... keep other styles ... */
+    width: 95%;             /* Changed from 100% to allow a tiny margin */
+    max-width: 550px;       /* Increased from 450px to make it wider overall */
+    padding: 45px 35px;
+}
+
+/* Specific Mobile Tweaks for POCO X7 */
+@media (max-width: 480px) {
+    body {
+        padding: 15px 10px; /* Thinner body padding = wider card */
+    }
+
+    .profile-rich-card {
+        padding: 30px 20px; /* Balanced inner padding */
+        width: 100%;        /* Use all available space on small phones */
+    }
+
+    /* Keep labels and values side-by-side but with more space */
+    .detail-row {
+        flex-direction: row;      /* Keep them horizontal since card is wider */
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;        /* Try to force one line */
+    }
+
+    .value-text {
+        text-align: right;
+        font-size: 0.85rem;       /* Slightly smaller text to fit horizontally */
+        min-width: 0;             /* Allow it to shrink */
+    }
+
+    .label-text {
+        font-size: 0.7rem;
+    }
+}
+</style>
+
+<div class="profile-rich-card">
+    <h1 class="profile-title">Identity Card</h1>
+
+    <div class="profile-image-container">
+        {% if user.profile.profile_picture %}
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
+        {% else %}
+            <img src="{% static 'images/default-profile.jpg' %}" alt="Default Profile">
+        {% endif %}
+        <span class="member-badge">VIP Member</span>
+    </div>
+
+    <div>
+        <a href="{% url 'edit_profile' %}" class="btn-gold-action">
+            Refine Profile
+        </a>
+    </div>
+
+    <div class="profile-details-list">
+        {% if user.first_name %}
+        <div class="detail-row">
+            <span class="label-text">Name</span>
+            <span class="value-text">{{ user.first_name }}</span>
+        </div>
+        {% endif %}
+
+        <div class="detail-row">
+            <span class="label-text">Screen Alias</span>
+            <span class="value-text">{{ user.username }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="label-text">Linked Email</span>
+            <span class="value-text" style="font-size: 0.85rem; opacity: 0.8;">{{ user.email }}</span>
+        </div>
+
+        {% if user.profile.location %}
+        <div class="detail-row">
+            <span class="label-text">Base Ops</span>
+            <span class="value-text">{{ user.profile.location }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'home' %}" class="btn-outline-home">
+        <span>🏠</span> Return to Cinema Home
+    </a>
+</div>
+{% endblock %}

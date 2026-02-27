@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* =========================================
+       1. GLOBAL PAGE SETUP
+       ========================================= */
+    .episodes-container {
+        padding: 20px 15px 100px;
+        background: radial-gradient(circle at top right, #1a1a1a, #080808);
+        min-height: 100vh;
+    }
+
+    /* Top Navigation */
+    .nav-vault-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .nav-pill-gold {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: 0.3s;
+    }
+
+    .nav-pill-gold:hover {
+        color: #ffca28;
+        border-color: #ffca28;
+    }
+
+    /* Header Section */
+    .series-main-title {
+        font-family: 'Cinzel', serif;
+        color: #ffca28;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+
+    .season-badge {
+        display: inline-block;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 5px 15px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    /* =========================================
+       2. EPISODE CARDS (MOBILE OPTIMIZED)
+       ========================================= */
+    .episode-glass-card {
+        background: #111;
+        border: 1px solid #222;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .episode-glass-card:hover {
+        transform: translateY(-5px);
+        border-color: #ffca28;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    /* Landscape Thumbnail (16:9) */
+    .thumb-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 Ratio */
+        overflow: hidden;
+        background: #000;
+    }
+
+    .episode-thumb {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .ep-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(0, 0, 0, 0.85);
+        color: #ffca28;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: 800;
+        font-size: 0.65rem;
+        border: 1px solid #ffca28;
+        z-index: 2;
+    }
+
+    /* =========================================
+       3. CONTENT & BUTTONS
+       ========================================= */
+    .card-body {
+        padding: 12px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .ep-title {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        line-height: 1.3;
+    }
+
+    .ep-meta {
+        color: #bbbbbb;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .btn-vault-play {
+        background: #ffca28;
+        color: #000 !important;
+        font-weight: 800;
+        font-size: 0.75rem;
+        border-radius: 6px;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        margin-top: 12px;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-vault-play:hover {
+        background: #ffffff;
+        transform: scale(1.02);
+    }
+
+    /* =========================================
+       4. MOBILE MEDIA QUERIES
+       ========================================= */
+    @media (max-width: 768px) {
+        .nav-vault-box {
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .series-main-title { font-size: 1.4rem; }
+
+        /* 2 Episodes per row on mobile */
+        .g-mobile-2 {
+            --bs-gutter-x: 10px;
+        }
+
+        .ep-title { font-size: 0.8rem; }
+        .btn-vault-play { font-size: 0.7rem; padding: 8px; }
+    }
+</style>
+
+<div class="episodes-container">
+    <div class="container">
+        
+        <div class="nav-vault-box">
+            <a href="{% url 'series_list' %}" class="nav-pill-gold">
+                <i class="fas fa-arrow-left me-1"></i> Back to Series
+            </a>
+            <a href="{% url 'home' %}" class="nav-pill-gold">
+                <i class="fas fa-home"></i>
+            </a>
+        </div>
+
+        <div class="text-center mb-5">
+            <h2 class="series-main-title">{{ series.title }}</h2>
+            <div class="season-badge">SEASON {{ season.season_number }}</div>
+        </div>
+
+        <div class="row g-4 g-mobile-2">
+            {% for episode in episodes %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="episode-glass-card">
+                    <div class="thumb-wrapper">
+                        <span class="ep-badge">EP {{ episode.episode_number }}</span>
+                        {% if season.series.thumbnail %}
+                            <img src="{{ season.series.thumbnail.url }}" alt="{{ episode.title }}" class="episode-thumb">
+                        {% else %}
+                            <img src="{% static 'images/default_thumb.jpg' %}" alt="N/A" class="episode-thumb">
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body">
+                        <div>
+                            <h6 class="ep-title">{{ episode.title|truncatechars:35 }}</h6>
+                            <p class="ep-meta mb-0">
+                                <i class="far fa-clock me-1" style="color: #ffca28;"></i> {{ episode.duration }} MINS
+                            </p>
+                        </div>
+                        
+                        <a href="{% url 'episode_detail' episode.id %}" class="btn-vault-play">
+                            <i class="fas fa-play me-1"></i> WATCH NOW
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="p-5 border border-secondary rounded-4">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <p class="text-white opacity-50">No episodes found in this season.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

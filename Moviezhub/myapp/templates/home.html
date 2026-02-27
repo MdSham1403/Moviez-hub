@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🌌 Overall Page Style */
+    body {
+        background-color: #080808; /* Deep black */
+        color: #ffffff;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .home-wrapper {
+        padding-bottom: 100px;
+    }
+
+    /* 📺 Glass Navigation Bar */
+    .cinema-nav {
+        background: rgba(20, 20, 20, 0.8) !important;
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid #222;
+        padding: 15px 0;
+    }
+
+    .brand-logo {
+        font-family: 'Cinzel', serif;
+        font-weight: bold;
+        color: #ffca28 !important;
+        letter-spacing: 2px;
+        font-size: 1.5rem;
+    }
+
+    /* 👤 Profile Section (Hero) */
+    .hero-section {
+        padding: 60px 20px;
+        text-align: center;
+        background: radial-gradient(circle at center, #1a1a1a 0%, #080808 100%);
+    }
+
+    .user-avatar {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 30px; /* Curved borders like you requested */
+        border: 2px solid #ffca28;
+        padding: 5px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .greeting-text {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .username-highlight {
+        color: #ffca28;
+    }
+
+    .sub-text {
+        color: #888;
+        max-width: 600px;
+        margin: 0 auto 40px;
+        font-size: 1.1rem;
+    }
+
+    /* 🎥 Choice Grid (Explore Buttons) */
+    .choice-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .choice-card {
+        background: #151515;
+        border: 1px solid #252525;
+        padding: 30px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        color: white;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .choice-card:hover {
+        background: #1a1a1a;
+        border-color: #ffca28;
+        transform: translateY(-10px);
+        color: #ffca28;
+    }
+
+    .choice-card i {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .choice-card span {
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: block;
+    }
+
+    /* 🆕 Update Badge & Toggle */
+    .top-controls {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 40px;
+    }
+
+    .btn-update {
+        background: rgba(255, 202, 40, 0.1);
+        color: #ffca28;
+        border: 1px solid #ffca28;
+        padding: 10px 25px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* 🌙 Theme Toggle */
+    .theme-toggle-box {
+        display: flex;
+        align-items: center;
+        background: #1a1a1a;
+        padding: 5px 15px;
+        border-radius: 50px;
+        border: 1px solid #333;
+    }
+
+    /* Footer */
+    .footer-simple {
+        margin-top: 100px;
+        padding: 40px;
+        border-top: 1px solid #1a1a1a;
+        color: #444;
+        font-size: 0.9rem;
+    }
+
+    /* Mobile Tweaks */
+
+    @media (max-width: 480px) {
+
+    .greeting-text { font-size: 1.8rem; }
+    .choice-grid { grid-template-columns: 1fr 1fr; }
+    .choice-card { padding: 20px 10px; }        .choice-card i { font-size: 1.8rem;    
+    /* 1. Fix the Logo size so it doesn't push the buttons out */
+    .brand-logo {
+        font-size: 1.1rem !important;
+        letter-spacing: 1px;
+    }
+
+    /* 2. Fix the Greeting Alignment */
+    .greeting-text { 
+        font-size: 1.5rem !important; 
+        max-width: 100% !important; /* Allow it to use the full width for centering */
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    /* 3. Ensure the hero section behaves */
+    .hero-section {
+        padding: 40px 10px; /* Less padding on small screens */
+    }
+
+    /* 4. Sub-text centering */
+    .sub-text {
+        font-size: 0.9rem;
+        padding: 0 15px;
+    }
+    }}
+    /* 📀 Small Compact Request Button */
+    .btn-req-sm {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 202, 40, 0.1); /* Subtle gold tint */
+        color: #ffca28 !important;
+        border: 1px solid rgba(255, 202, 40, 0.4);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: 0.3s ease;
+    }
+
+    .btn-req-sm i {
+        font-size: 0.85rem;
+    }
+
+    .btn-req-sm:hover {
+        background: #ffca28;
+        color: #000 !important;
+        box-shadow: 0 0 10px rgba(255, 202, 40, 0.3);
+        transform: translateY(-1px);
+    }
+
+</style>
+
+<div class="home-wrapper">
+    <nav class="navbar navbar-dark cinema-nav sticky-top">
+    <div class="container d-flex flex-row justify-content-between align-items-center flex-nowrap">
+        <a class="navbar-brand brand-logo mb-0" href="{% url 'home' %}" style="font-size: 1.1rem; white-space: nowrap;">MOVIEZ HUB</a>
+        
+        <div class="d-flex align-items-center">
+            <a href="{% url 'profile' %}" class="text-white me-2 text-decoration-none" style="font-size: 0.75rem; white-space: nowrap;">Profile</a>
+            <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger rounded-pill px-2" style="font-size: 0.7rem; white-space: nowrap;">Logout</a>
+        </div>
+    </div>
+    </nav>
+
+    <section class="hero-section">
+        {% if user.profile.profile_picture %}
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="user-avatar shadow">
+        {% else %}
+            <img src="{% static 'images/default-profile.jpg' %}" alt="Profile" class="user-avatar shadow">
+        {% endif %}
+
+        <h2 class="greeting-text">Hey, <span class="username-highlight">{{ user.first_name|default:user.username }}</span>!</h2>
+        <p class="sub-text">Ready for your next favorite story? Pick a category below and start streaming instantly.</p>
+        
+        <div class="top-controls">
+            <a href="{% url 'updates' %}" class="btn-update">
+                <i class="bi bi-stars"></i> Check Updates
+            </a>
+            <a href="{% url 'request_movie' %}" class="btn-update">
+                <i class="fas fa-plus-circle"></i> Request
+            </a>
+        
+        <!-- 
+            <div class="theme-toggle-box">
+                    <span class="me-2 small">Theme</span>
+                    <input type="checkbox" id="darkModeToggle" style="cursor:pointer;">
+                </div>
+            </div>
+        --> 
+    </section>
+    <div class="choice-grid">
+        <a href="{% url 'explore_movies' %}" class="choice-card">
+            <i class="bi bi-film text-warning"></i>
+            <span>All Movies</span>
+        </a>
+        <a href="{% url 'series_list' %}" class="choice-card">
+            <i class="bi bi-tv text-info"></i>
+            <span>TV Series</span>
+        </a>
+        <a href="{% url 'my_watchlist' %}" class="choice-card">
+            <i class="bi bi-bookmark-heart text-danger"></i>
+            <span>My Watchlist</span>
+        </a>
+        <a href="{% url 'watch_history' %}" class="choice-card">
+            <i class="bi bi-clock-history text-success"></i>
+            <span>History</span>
+        </a>
+    </div>
+
+    <footer class="footer-simple text-center">
+        <p>&copy; {% now "Y" %} Moviez Hub. Made for movie lovers.</p>
+    {% if user.is_staff %}
+    <span style="color: #555; margin: 0 8px;"></span> 
+    <a href="{% url 'admin:index' %}" 
+       style="display: inline-block; 
+              color: #ffca28; 
+              text-decoration: none; 
+              font-size: 11px; 
+              font-weight: bold; 
+              text-transform: uppercase; 
+              letter-spacing: 1px;
+              padding: 2px 5px;
+              border: 1px solid rgba(229, 185, 9, 0.3);
+              border-radius: 3px;">
+       Control Panel
+    </a>
+    {% endif %}
+    </footer>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+{% endblock %}

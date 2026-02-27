@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 📜 History Archive Layout */
+    .history-container {
+        padding-top: 40px;
+        padding-bottom: 80px;
+    }
+
+    .history-title {
+        font-family: 'Cinzel', serif;
+        color: var(--gold);
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 40px;
+    }
+
+    /* 💎 Glass History Card */
+    .history-glass-card {
+        background: var(--slate-glass);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: 0.3s ease;
+        height: 100%;
+    }
+
+    .history-glass-card:hover {
+        border-color: var(--gold);
+        transform: translateY(-5px);
+    }
+
+    /* 🖼️ Fixed Aspect Poster (No Cropping) */
+    .poster-frame {
+        height: 220px;
+        background: #000; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .poster-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; 
+    }
+
+    /* 📝 Content Typography */
+    .history-meta {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .movie-title-link {
+        color: #fff;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .watch-date {
+        color: #888;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+    }
+
+    /* 🔘 Buttons */
+    .small-btn-vault {
+        padding: 6px 15px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 50px;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-restore {
+        background: rgba(255, 215, 0, 0.1);
+        color: var(--gold) !important;
+        border: 1px solid var(--gold);
+    }
+
+    .btn-restore:hover {
+        background: var(--gold);
+        color: #000 !important;
+    }
+
+    .btn-clear-log {
+        background: transparent;
+        color: #ff4d4d;
+        border: 1px solid #ff4d4d;
+    }
+
+    .btn-clear-log:hover {
+        background: #ff4d4d;
+        color: #fff;
+    }
+
+    .nav-vault-link {
+        color: var(--gold);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+
+<div class="container history-container">
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <a href="javascript:history.back()" class="nav-vault-link me-4">
+                <i class="fas fa-chevron-left"></i> Back
+            </a>
+            <a href="{% url 'movie_list' %}" class="nav-vault-link">
+                <i class="fas fa-film"></i> Movies
+            </a>
+        </div>
+
+        {% if history %}
+        <form action="{% url 'clear_watch_history' %}" method="post" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="small-btn-vault btn-clear-log"
+                    onclick="return confirm('Initiate permanent deletion of access logs?');">
+                <i class="fas fa-trash-alt me-1"></i> Wipe History
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <h2 class="history-title text-center">The Screening Archive</h2>
+
+    {% if history %}
+        <div class="row g-4">
+            {% for record in history %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="history-glass-card">
+                        
+                        {# --- POSTER LOGIC --- #}
+                        <div class="poster-frame">
+                            {% if record.stream.movie %}
+                                {# MOVIE POSTER #}
+                                {% if record.stream.movie.poster %}
+                                    <img src="{{ record.stream.movie.poster.url }}" class="poster-img" alt="{{ record.stream.movie.title }}">
+                                {% elif record.stream.movie.poster_url %}
+                                    <img src="{{ record.stream.movie.poster_url }}" class="poster-img" alt="{{ record.stream.movie.title }}">
+                                {% else %}
+                                    <img src="{% static 'default_poster.jpg' %}" class="poster-img" alt="N/A">
+                                {% endif %}
+                            {% elif record.stream.episode %}
+                                {# EPISODE THUMBNAIL (From Series) #}
+                                {% if record.stream.episode.season.series.poster %}
+                                    <img src="{{ record.stream.episode.season.series.poster.url }}" class="poster-img" alt="{{ record.stream.episode.title }}">
+                                {% else %}
+                                    <img src="{% static 'default_poster.jpg' %}" class="poster-img" alt="N/A">
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        
+                        {# --- META DATA --- #}
+                        <div class="history-meta">
+                            {% if record.stream.movie %}
+                                <a href="{% url 'movie_detail' movie_id=record.stream.movie.id %}" class="movie-title-link">
+                                    {{ record.stream.movie.title }}
+                                </a>
+                                <p class="watch-date">{{ record.updated_at|date:"d M Y • H:i" }}</p>
+                                <a href="{% url 'movie_detail' movie_id=record.stream.movie.id %}" class="small-btn-vault btn-restore">Re-access</a>
+                            {% elif record.stream.episode %}
+                                <a href="{% url 'episode_detail' episode_id=record.stream.episode.id %}" class="movie-title-link">
+                                    {{ record.stream.episode.season.series.title }} - S{{ record.stream.episode.season.season_number }}E{{ record.stream.episode.episode_number }}
+                                </a>
+                                <p class="watch-date">{{ record.updated_at|date:"d M Y • H:i" }}</p>
+                                <a href="{% url 'episode_detail' episode_id=record.stream.episode.id %}" class="small-btn-vault btn-restore">Re-access</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-ghost fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No archival records found for your account.</p>
+            <a href="{% url 'movie_list' %}" class="btn-restore small-btn-vault mt-3">Start Browsing</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

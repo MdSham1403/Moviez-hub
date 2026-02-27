@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🌌 Background and Alignment */
+    body {
+        background: radial-gradient(circle at top right, #1a1a1a, #050505);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* ✨ Success Card */
+    .success-card {
+        background: rgba(20, 20, 20, 0.75);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 202, 40, 0.2);
+        border-radius: 30px;
+        padding: 50px 30px;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+        animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* ✅ Animated Checkmark Icon */
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 202, 40, 0.1);
+        color: #ffca28;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 25px;
+        border: 1px solid rgba(255, 202, 40, 0.3);
+        box-shadow: 0 0 20px rgba(255, 202, 40, 0.1);
+    }
+
+    .success-title {
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .success-message {
+        color: #aaa;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 35px;
+    }
+
+    /* 🏆 Gold Outline Button */
+    .btn-outline-gold {
+        display: inline-block;
+        border: 1px solid #ffca28;
+        color: #ffca28;
+        padding: 12px 35px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-gold:hover {
+        background: #ffca28;
+        color: #000;
+        box-shadow: 0 0 20px rgba(255, 202, 40, 0.4);
+        transform: translateY(-3px);
+    }
+
+    /* 🎬 Animation */
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Mobile optimization */
+    @media (max-width: 480px) {
+        .success-card {
+            padding: 40px 20px;
+        }
+        .success-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="success-card">
+    <div class="success-icon">
+        <i class="fas fa-check"></i> </div>
+    
+    <h2 class="success-title">Request Received</h2>
+    
+    <p class="success-message">
+        Your movie request has been logged into the <strong>Elite Vault</strong>. 
+        Our curators will review it shortly.
+    </p>
+
+    <a href="{% url 'home' %}" class="btn-outline-gold">
+        Return to Cinema
+    </a>
+</div>
+
+<script>
+    setTimeout(function() {
+        // window.location.href = "{% url 'home' %}";
+    }, 5000);
+</script>
+
+{% endblock %}

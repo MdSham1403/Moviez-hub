@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .deactivate-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .hazard-card {
+        max-width: 500px;
+        width: 100%;
+        padding: 40px;
+        text-align: center;
+        border: 1px solid rgba(255, 77, 77, 0.3) !important; /* Subtle Ruby border */
+    }
+
+    .hazard-icon {
+        font-size: 3rem;
+        color: #ff4d4d;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 10px rgba(255, 77, 77, 0.3));
+    }
+
+    .warning-text {
+        color: #888;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    .confirm-label {
+        color: var(--gold);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    /* Red Button Variation */
+    .btn-deactivate {
+        background: linear-gradient(45deg, #ff4d4d, #b30000);
+        color: white;
+        border: none;
+        padding: 14px;
+        width: 100%;
+        border-radius: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(179, 0, 0, 0.2);
+    }
+
+    .btn-deactivate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(179, 0, 0, 0.4);
+        filter: brightness(1.2);
+    }
+
+    .cancel-link {
+        display: inline-block;
+        margin-top: 25px;
+        color: #666;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: 0.3s;
+    }
+
+    .cancel-link:hover {
+        color: var(--gold);
+    }
+</style>
+
+<div class="deactivate-wrapper">
+    <div class="rich-card hazard-card">
+        <div class="hazard-icon">
+            <i class="fas fa-user-slash"></i>
+        </div>
+        
+        <h2 class="mb-3" style="color: #fff;">Account Retirement</h2>
+        
+        <p class="warning-text">
+            You are about to deactivate your <strong>Executive Membership</strong>. This will restrict your access to the private vault and log you out of all devices immediately.
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-4 text-start">
+                <label for="password" class="confirm-label">Security Verification</label>
+                <input type="password" name="password" id="password" class="form-control" required placeholder="Confirm Security Key">
+            </div>
+
+            <button type="submit" class="btn-deactivate" onclick="return confirm('Final Confirmation: Are you sure you want to retire this account?')">
+                Confirm Deactivation
+            </button>
+        </form>
+
+        <a href="{% url 'profile' %}" class="cancel-link">
+            <i class="fas fa-arrow-left me-1"></i> Return to Safety
+        </a>
+    </div>
+</div>
+{% endblock %}

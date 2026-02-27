@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* 📱 RESET & BASE */
+    body { 
+      margin: 0; padding: 0; 
+      background-color: #080808; 
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* 📧 EMAIL WRAPPER */
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #111111;
+      border: 1px solid #222222;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    /* 🏷️ PREMIUM HEADER (Gradient & Glow) */
+    .header {
+      background: linear-gradient(135deg, #ffca28 0%, #b8860b 100%);
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .brand-name {
+      font-family: 'Georgia', serif; /* Cinematic fallback */
+      font-size: 32px;
+      font-weight: 900;
+      color: #000000;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .header-tagline {
+      font-size: 12px;
+      color: #000000;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      margin-top: 5px;
+      opacity: 0.8;
+    }
+
+    /* 📝 CONTENT AREA */
+    .content {
+      padding: 50px 40px;
+      text-align: center;
+    }
+
+    .welcome-text {
+      color: #ffffff;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    .description {
+      color: #aaaaaa;
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+
+    .highlight-box {
+      background: rgba(255, 202, 40, 0.05);
+      border: 1px dashed rgba(255, 202, 40, 0.3);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 35px;
+    }
+
+    .feature-text {
+        color: #ffca28;
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    /* 🔘 THE HERO BUTTON */
+    .btn-wrapper {
+        padding: 20px 0;
+    }
+
+    .btn { 
+      background-color: #ffca28; 
+      color: #000000 !important; 
+      padding: 18px 45px; 
+      border-radius: 8px; 
+      text-decoration: none; 
+      font-weight: 900;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: inline-block;
+      transition: 0.3s;
+    }
+
+    /* 🎞️ FOOTER */
+    .footer {
+      background-color: #0a0a0a;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #222;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      color: #555555;
+      line-height: 1.6;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Mobile adjustments */
+    @media screen and (max-width: 600px) {
+      .email-container { margin: 10px; border-radius: 10px; }
+      .content { padding: 30px 20px; }
+      .welcome-text { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1 class="brand-name">MoviezHub</h1>
+      <div class="header-tagline">Elite Streaming Vault</div>
+    </div>
+
+    <div class="content">
+      <h2 class="welcome-text">Greetings, {{ user.username }}! 👋</h2>
+      
+      <p class="description">
+        Your high-definition journey into the world of cinema begins today. 
+        We’ve granted you full access to our curated archive of movies and series.
+      </p>
+
+      <div class="highlight-box">
+        <span class="feature-text">🍿 UNLIMITED ACCESS • 4K STREAMING • AD-FREE</span>
+      </div>
+      
+      <div class="btn-wrapper">
+        <a href="http://127.0.0.1:8000/home/" class="btn">Enter the Vault</a>
+      </div>
+
+      <p class="description" style="font-size: 14px; margin-top: 30px;">
+        Need a specific title? Use our <b>Request</b> feature once you’re inside.
+      </p>
+    </div>
+
+    <div class="footer">
+      <p class="footer-text">
+        You are receiving this because you are a registered member of MoviezHub.<br>
+        © 2026 MoviezHub Elite Cinema. All Rights Reserved.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

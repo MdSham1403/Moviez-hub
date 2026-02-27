@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Premium dark gradient background */
+    body {
+        background: radial-gradient(circle at top right, #1a1a1a, #050505);
+        height: 100vh;
+        overflow: hidden; /* Keeps the focus on the center */
+    }
+
+    .error-wrapper {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    /* Glassmorphic Error Card */
+    .error-card {
+        background: rgba(20, 20, 20, 0.6);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 215, 0, 0.1);
+        border-radius: 40px;
+        padding: 60px 40px;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Cinematic Glow Effect for the 404 image */
+    .error-image {
+        max-width: 300px;
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.2));
+        transition: transform 0.5s ease;
+    }
+
+    .error-image:hover {
+        transform: scale(1.05) rotate(-2deg);
+    }
+
+    /* Luxury Typography */
+    .error-title {
+        color: #fff;
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin-top: 30px;
+    }
+
+    .error-code {
+        color: #ffd700; /* Gold */
+        font-size: 5rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 10px;
+        display: block;
+        opacity: 0.8;
+    }
+
+    .error-subtitle {
+        color: #888;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Premium Button */
+    .btn-gold-outline {
+        background: transparent;
+        color: #ffd700;
+        border: 2px solid #ffd700;
+        padding: 14px 35px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        transition: all 0.4s ease;
+        display: inline-block;
+    }
+
+    .btn-gold-outline:hover {
+        background: linear-gradient(45deg, #ffd700, #b8860b);
+        color: #000;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        transform: translateY(-3px);
+    }
+
+    /* Background numbers decoration */
+    .bg-404 {
+        position: absolute;
+        font-size: 20vw;
+        font-weight: 900;
+        color: rgba(255, 215, 0, 0.02);
+        z-index: -1;
+        user-select: none;
+    }
+</style>
+
+<div class="error-wrapper">
+    <div class="bg-404">404</div>
+
+    <div class="error-card">
+        
+        <h1 class="error-title display-5">Scene Not Found</h1>
+        
+        <p class="error-subtitle">
+            This part of the script seems to be missing. The page you are looking for has been cut from the final edit.
+        </p>
+
+        <a href="{% url 'home' %}" class="btn-gold-outline">
+            🏠 Return to Main Feature
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🔌 Power-On Layout */
+    .reactivate-wrapper {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .glass-reactivate-card {
+        background: var(--slate-glass);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(52, 152, 219, 0.3); /* Subtle blue glow */
+        border-radius: 30px;
+        padding: 50px 40px;
+        max-width: 480px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* ⚡ Accent Glow in corner */
+    .glass-reactivate-card::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, rgba(52, 152, 219, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .reactivate-icon {
+        font-size: 3.5rem;
+        color: #3498db;
+        margin-bottom: 25px;
+        filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.5));
+    }
+
+    .reactivate-heading {
+        font-family: 'Cinzel', serif;
+        color: #fff;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    .reactivate-subtext {
+        color: #bbb;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 35px;
+    }
+
+    /* 🚀 Reactivation Button */
+    .btn-vault-restore {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: #fff !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        padding: 16px 35px;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 20px rgba(41, 128, 185, 0.3);
+    }
+
+    .btn-vault-restore:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 30px rgba(41, 128, 185, 0.5);
+        filter: brightness(1.1);
+        cursor: pointer;
+    }
+
+    .back-to-safety {
+        display: inline-block;
+        margin-top: 25px;
+        color: #777;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: 0.3s;
+    }
+
+    .back-to-safety:hover {
+        color: #3498db;
+    }
+</style>
+
+<div class="reactivate-wrapper">
+    <div class="glass-reactivate-card">
+        <div class="reactivate-icon">
+            <i class="fas fa-power-off"></i>
+        </div>
+        
+        <h2 class="reactivate-heading">Restore Vault Access</h2>
+        
+        <p class="reactivate-subtext">
+            Your identity archive is currently offline. 
+            Initiate a restoration request to re-enable your credentials and access your library.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-vault-restore">
+                <i class="fas fa-sync-alt me-2"></i> Request Reactivation
+            </button>
+        </form>
+
+        <a href="{% url 'login' %}" class="back-to-safety">
+            <i class="fas fa-chevron-left me-1"></i> Return to Login
+        </a>
+    </div>
+</div>
+{% endblock %}

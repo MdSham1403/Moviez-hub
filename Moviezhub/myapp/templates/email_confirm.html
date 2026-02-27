@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .verification-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .success-card {
+        max-width: 550px;
+        width: 100%;
+        padding: 60px 40px;
+        text-align: center;
+        position: relative;
+    }
+
+    /* The "Golden Seal" Icon */
+    .success-seal {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(45deg, var(--gold), var(--dark-gold));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        font-size: 3rem;
+        color: #000;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        animation: sealPulse 2s infinite;
+    }
+
+    @keyframes sealPulse {
+        0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
+        100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+    }
+
+    .welcome-title {
+        color: #fff;
+        margin-bottom: 20px;
+        font-size: 2rem;
+    }
+
+    .success-description {
+        color: var(--text-muted);
+        font-family: 'Lato', sans-serif;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 40px;
+    }
+
+    .btn-enter-vault {
+        font-size: 1rem;
+        padding: 15px 40px !important;
+    }
+</style>
+
+<div class="verification-wrapper">
+    <div class="rich-card success-card">
+        <div class="success-seal">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <h2 class="welcome-title">Credentials Verified</h2>
+        
+        <p class="success-description">
+            Your identity has been successfully authenticated. Your executive access to the <strong>Moviez Hub</strong> private collection is now active.
+        </p>
+
+        <div class="text-center">
+            <a href="{% url 'login' %}" class="btn-premium btn-enter-vault">
+                <i class="fas fa-sign-in-alt me-2"></i> Enter the Vault
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

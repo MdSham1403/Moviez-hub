@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div id="notification-area" style="position: fixed; top: 20px; right: 20px; z-index: 10000; pointer-events: none;"></div>
+
+<div class="modal fade" id="trailerModal" tabindex="-1" aria-labelledby="trailerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="trailerModalLabel">🎬 Trailer - {{ movie.title }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="ratio ratio-16x9 bg-black d-flex align-items-center justify-content-center" id="trailerContainer">
+                    {% if youtube_id %}
+                        <iframe id="trailerYoutube"
+                                data-src="https://www.youtube.com/embed/{{ youtube_id }}?autoplay=1&rel=0&enablejsapi=1"
+                                frameborder="0"
+                                allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                    {% elif movie.trailer_link %}
+                        <video id="trailerVideo" controls class="w-100 h-100">
+                            <source src="{{ movie.trailer_link }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% else %}
+                        <p class="text-center text-muted mt-4">Trailer not available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* STYLES UNTOUCHED AS REQUESTED */
+    .hero-section { padding: 60px 0; border-bottom: 1px solid var(--border-glass); }
+    .movie-poster-detail { width: 100%; max-width: 350px; border-radius: 15px; border: 1px solid var(--gold); box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: 0.4s; }
+    .movie-poster-detail:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
+    .detail-title { font-family: 'Cinzel', serif; color: var(--gold); font-weight: 700; font-size: 3rem; margin-bottom: 15px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+    .movie-info-line { font-size: 1.1rem; color: #ddd; margin-bottom: 8px; }
+    .movie-info-line strong { color: var(--gold); margin-right: 10px; font-family: 'Montserrat', sans-serif; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+    .description-box { background: var(--slate-glass); padding: 25px; border-radius: 15px; border: 1px solid var(--border-glass); color: #eee; line-height: 1.8; font-size: 0.95rem; }
+    .cast-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 0; scrollbar-width: thin; }
+    .cast-item { flex: 0 0 140px; text-align: center; }
+    .cast-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .cast-name { font-size: 0.85rem; font-weight: 700; color: #fff; margin: 0; }
+    .cast-role { font-size: 0.75rem; color: var(--gold); opacity: 0.8; }
+    .btn-action-group { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+    .btn-premium-watch { background: var(--gold); color: #000 !important; font-weight: 700; padding: 12px 35px; border-radius: 50px; text-decoration: none; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+    .btn-premium-watch:hover { transform: translateY(-3px); background: #fff; }
+    
+    .btn-outline-gold {
+        background: transparent !important;
+        color: #ffd700 !important;
+        border: 1px solid #ffd700 !important;
+        padding: 10px 25px;
+        border-radius: 50px;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    .btn-outline-gold:hover { background: #ffd700 !important; color: #000 !important; transform: translateY(-2px); }
+
+    .slide-notif {
+        background: #1a1a1a;
+        color: white;
+        padding: 15px 25px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        border-left: 5px solid #ffd700;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        transform: translateX(150%);
+        transition: transform 0.5s ease;
+        pointer-events: auto;
+    }
+    .slide-notif.show { transform: translateX(0); }
+
+    /* =========================================
+   MOBILE RESPONSIVENESS (Explore-Style Sync)
+   Targeting screens 768px and smaller
+   ========================================= */
+@media (max-width: 768px) {
+    /* 1. Center the entire hero section */
+    .hero-section {
+        padding: 30px 15px 80px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* 2. Adjust Title size and center it */
+    .detail-title {
+        font-size: 2rem !important; /* Matches .explore-title size */
+        margin-top: 20px;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* 3. Center Info lines and badges */
+    .d-flex.flex-wrap.gap-3.mb-4 {
+        justify-content: center !important;
+    }
+
+    .movie-info-line {
+        text-align: center;
+    }
+
+    /* 4. Match the Home/Back button style from the Explore Page */
+    .btn-home-link, .mt-4 a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 1rem;
+        padding: 12px 25px;
+        background: rgba(20, 20, 20, 0.8) !important;
+        color: #ffca28 !important; /* Gold text */
+        border: 1px solid rgba(255, 202, 40, 0.3) !important;
+        border-radius: 50px;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        margin-top: 20px;
+        transition: 0.3s;
+    }
+
+    /* 5. Center Action Buttons group */
+    .btn-action-group {
+        justify-content: center !important;
+        gap: 15px;
+    }
+
+    .btn-premium-watch, .btn-outline-gold {
+        width: 100%; /* Stack buttons on very small screens */
+        max-width: 280px;
+    }
+
+    /* 6. Adjust Poster size for mobile */
+    .movie-poster-detail {
+        max-width: 250px;
+        margin: 0 auto;
+    }
+
+    /* 7. Style the Cast (Ensemble) Heading to match */
+    h3.fw-bold.text-white {
+        font-size: 1.2rem;
+        text-align: center;
+        color: #ffca28 !important; /* Match gold highlights */
+    }
+
+    /* 8. Fix Horizontal Scroll padding for Cast */
+    .cast-scroll {
+        padding: 10px 0 30px;
+    }
+}   
+</style>
+
+<div class="container hero-section">
+    <div class="row align-items-center">
+        <div class="col-lg-5 text-center mb-5 mb-lg-0">
+            <div class="position-relative d-inline-block">
+                {% if movie.poster %}
+                    <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                {% elif movie.poster_url %}
+                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                {% else %}
+                    <img src="{% static 'images/default_poster.jpg' %}" alt="N/A" class="movie-poster-detail">
+                {% endif %}
+            <div class="badge bg-dark border border-gold position-absolute top-0 end-0 m-3 px-3 py-2" style="font-size: 1rem;">
+                    ⭐ {{ movie.rating }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <h1 class="detail-title">{{ movie.title }}</h1>
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <span class="text-gold fw-bold">{{ movie.release_year }}</span>
+                <span class="text-muted">|</span>
+                <span class="text-white">{{ movie.language }}</span>
+                <span class="text-muted">|</span>
+                <div>
+                    {% for genre in movie.genre.all %}
+                        <span class="badge rounded-pill bg-secondary me-1" style="font-size: 0.7rem;">{{ genre.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="movie-info-line"><strong>Director</strong> {{ movie.director }}</div>
+            <hr class="border-secondary my-4">
+            <div class="description-box">{{ movie.description }}</div>
+
+            <div class="btn-action-group">
+                <a href="{% url 'watch_movie' movie.id %}" class="btn-premium-watch">
+                    <i class="fas fa-play me-2"></i> WATCH NOW
+                </a>
+                
+                {% if youtube_id or movie.trailer_link %}
+                <button class="btn-outline-gold" data-bs-toggle="modal" data-bs-target="#trailerModal">
+                    <i class="fas fa-video me-2"></i> TRAILER
+                </button>
+                {% endif %}
+
+                <a href="{% url 'add_to_watchlist' movie.id %}" class="btn-outline-gold watchlist-toggle-btn">
+                    {% if is_in_watchlist %}
+                        <i class="fas fa-check me-2"></i> WATCHLISTED
+                    {% else %}
+                        <i class="fas fa-plus me-2"></i> WATCHLIST
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 pt-5">
+        <h3 class="fw-bold text-white mb-4" style="letter-spacing: 2px;">THE ENSEMBLE</h3>
+        <div class="cast-scroll">
+            {% for cast_member in movie.cast.all %}
+                <div class="cast-item">
+                    <img src="{{ cast_member.photo_url|default:'/static/default_cast.jpg' }}" class="cast-img" alt="{{ cast_member.name }}">
+                    <p class="cast-name">{{ cast_member.name }}</p>
+                    <p class="cast-role">{{ cast_member.role }}</p>
+                </div>
+            {% empty %}
+                <p class="text-muted">Cast records are pending archive.</p>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-4">
+            <a href="javascript:history.back()" style="color: #3498db; text-decoration: none; font-size: 1rem;">
+                <i class="fas fa-arrow-left"></i> Back to Movies
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const trailerModal = document.getElementById('trailerModal');
+    const iframe = document.getElementById('trailerYoutube');
+    const video = document.getElementById('trailerVideo');
+
+    let ytLoadTimer = null;
+
+    if (trailerModal) {
+
+        trailerModal.addEventListener('shown.bs.modal', function () {
+
+            if (iframe) {
+                const source = iframe.getAttribute('data-src');
+
+                // Give browser breathing room before injecting iframe
+                ytLoadTimer = setTimeout(() => {
+                    iframe.setAttribute('src', source);
+                }, 1200);
+            }
+
+            if (video) {
+                setTimeout(() => {
+                    video.play();
+                }, 300);
+            }
+        });
+
+        trailerModal.addEventListener('hidden.bs.modal', function () {
+
+            // Cancel pending iframe load if modal closed fast
+            if (ytLoadTimer) {
+                clearTimeout(ytLoadTimer);
+                ytLoadTimer = null;
+            }
+
+            if (iframe) {
+                iframe.setAttribute('src', '');
+            }
+
+            if (video) {
+                video.pause();
+                video.currentTime = 0;
+            }
+        });
+    }
+
+    function showToast(text) {
+        const area = document.getElementById('notification-area');
+        const notif = document.createElement('div');
+        notif.className = 'slide-notif';
+        notif.innerText = text;
+        area.appendChild(notif);
+        
+        setTimeout(() => notif.classList.add('show'), 100);
+        setTimeout(() => {
+            notif.classList.remove('show');
+            setTimeout(() => notif.remove(), 500);
+        }, 3000);
+    }
+
+    const watchlistBtn = document.querySelector('.watchlist-toggle-btn');
+    if (watchlistBtn) {
+
+        watchlistBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            if (this.innerText.trim().includes('WATCHLISTED')) {
+                showToast('This movie is already in your wishlist!');
+                return;
+            }
+
+            const url = this.getAttribute('href');
+
+            fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+                .then(() => {
+                    this.innerHTML = '<i class="fas fa-check me-2"></i> WATCHLISTED';
+                    showToast('Added to wishlist!');
+                })
+                .catch(() => {
+                    this.innerHTML = '<i class="fas fa-check me-2"></i> WATCHLISTED';
+                    showToast('Added to wishlist!');
+                });
+        });
+
+    }
+
+});
+</script>
+{% endblock %}

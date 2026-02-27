@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🌌 Page Setup */
+    body {
+        background-color: #080808;
+        color: #ffffff;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .title {
+        font-family: 'Cinzel', serif;
+        color: #ffca28;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin-bottom: 30px;
+    }
+
+    /* 🔍 Simple Search & Filter Bar */
+    .search-section {
+        background: #151515;
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid #252525;
+    }
+
+    .search-bar, .form-select {
+        background-color: #080808 !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+        border-radius: 10px !important;
+    }
+
+    .search-btn {
+        background-color: #ffca28 !important;
+        color: #000 !important;
+        font-weight: bold;
+        border-radius: 10px;
+        padding: 8px 20px;
+    }
+
+    /* 🎬 Movie Card Styling */
+    .movie-card {
+        background: transparent;
+        border: none;
+        transition: transform 0.3s ease;
+    }
+
+    .movie-poster-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px; /* Curved borders for posters */
+        border: 1px solid #222;
+        aspect-ratio: 2/3;
+    }
+
+    .movie-poster {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .movie-card:hover .movie-poster {
+        transform: scale(1.1); /* Zoom effect on hover */
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .movie-card-rich {
+        transition: 0.3s;
+    }
+
+    .movie-card img {
+        height: 250px;
+        object-fit: cover;
+        border-radius: 14px;
+    }
+
+    @media (min-width: 992px) {
+        .movie-card img {
+            height: 220px;
+        }
+    }
+
+    .movie-card-rich .movie-info {
+        padding: 10px 4px;
+    }
+
+    .movie-card-rich h5 {
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        margin-bottom: 3px;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .movie-card-rich p {
+        font-size: 0.7rem;
+        color: var(--gold);
+        letter-spacing: 1.2px;
+        opacity: 0.9;
+    }
+
+
+    .movie-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 12px;
+
+    /* 1. The Standard Way (Fixes the error) */
+    line-clamp: 1;
+    display: flex; /* Fallback for older browsers */
+
+    /* 2. The Webkit Way (For Chrome, Safari, Edge) */
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    
+    /* 3. The Cleanup */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds the "..." nicely */
+    }
+    
+    .movie-year {
+        font-size: 0.8rem;
+        color: #ffca28 !important; /* Gold color for year */
+        opacity: 0.8;
+    }
+
+    /* 🔘 Navigation Buttons */
+    .btn-nav-simple {
+        color: #ffca28;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid #ffca28;
+        padding: 5px 15px;
+        border-radius: 50px;
+        transition: 0.3s;
+    }
+
+    .btn-nav-simple:hover {
+        background: #ffca28;
+        color: #000;
+    }
+
+    .movie-link {
+        text-decoration: none;
+    }
+    /* 📱 Mobile Responsiveness (max-width: 768px) */
+    @media (max-width: 768px) {
+        .title {
+            font-size: 1.5rem; /* Smaller heading on mobile */
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+        }
+
+        .search-section {
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        /* Stack the search button and inputs nicely */
+        .search-btn {
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        /* Adjust movie card image height for mobile grid */
+        .movie-card img {
+            height: 200px; /* Shorter posters on small screens */
+            border-radius: 10px;
+        }
+
+        .movie-title {
+            font-size: 0.85rem; /* Smaller text for movie titles */
+            margin-top: 8px;
+        }
+
+        .movie-year {
+            font-size: 0.75rem;
+        }
+
+        /* Adjust navigation buttons for thumb-friendly clicking */
+        .btn-nav-simple {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+
+        /* Reduce container spacing on mobile */
+        .container.mt-5 {
+            margin-top: 2rem !important;
+        }
+        
+        /* Ensure the 2-column grid has enough gap */
+        .g-4 {
+            --bs-gutter-x: 0.8rem;
+            --bs-gutter-y: 0.8rem;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <header class="text-center">
+        <h1 class="title">{{ language }} Collection</h1>
+    </header>
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <a href="{% url 'explore_movies' %}" class="btn-nav-simple">← Languages</a>
+        <a href="{% url 'home' %}" class="btn-nav-simple">Home</a>
+    </div>
+
+    <div class="search-section mb-5 shadow">
+        <form id="movie-search-form" method="GET" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control search-bar" placeholder="Find a movie..." value="{{ request.GET.search }}">
+            </div>
+            <div class="col-md-2 col-6">
+                <select name="genre" class="form-select">
+                    <option value="">All Types</option>
+                    {% for genre in genres %}
+                    <option value="{{ genre }}" {% if request.GET.genre == genre %}selected{% endif %}>{{ genre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 col-6">
+                <select name="release_year" class="form-select">
+                    <option value="">Any Year</option>
+                    {% for year in release_years %}
+                    <option value="{{ year }}" {% if request.GET.release_year == year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="sort_by" class="form-select">
+                    <option value="">Order By</option>
+                    <option value="title_asc" {% if request.GET.sort_by == 'title_asc' %}selected{% endif %}>A to Z</option>
+                    <option value="release_year_desc" {% if request.GET.sort_by == 'release_year_desc' %}selected{% endif %}>Newest First</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn search-btn w-100">Search</button>
+            </div>
+        </form>
+    </div>
+
+    {% if movies %}
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+        {% for movie in movies %}
+        <div class="col">
+            <div class="movie-card">
+                <a href="{% url 'movie_detail' movie.id %}" class="movie-link text-center d-block">
+                     <div class="movie-card">
+                        {% if movie.poster %}
+                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                        {% elif movie.poster_url %}
+                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                        {% else %}
+                            <img src="https://res.cloudinary.com/dx6cvs9dk/static/Images/upload/profile_pics/default_poster.jpg" alt="N/A" class="movie-poster-detail">
+                        {% endif %}
+                    </div>
+                    <h5 class="movie-title">{{ movie.title }}</h5>
+                    <p class="movie-year">{{ movie.release_year }}</p>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <h4 class="text-muted">No movies found here yet.</h4>
+        <p class="text-muted small">Try a different filter or check back later!</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="py-5"></div>
+
+{% endblock %}

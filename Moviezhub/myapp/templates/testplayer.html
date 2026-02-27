@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2>Now Watching: {{ movie.title }}</h2>
+
+    <!-- Video Player Wrapper -->
+    <div class="video-wrapper" style="max-width: 100%; margin: 0 auto;">
+        {% if movie.video_file %}
+            <video id="video-player" controls
+            {% if movie.thumbnail %}
+            poster="{{ movie.thumbnail.url }}"
+            {% endif %}
+            style="width: 100%; height: auto;">
+                <source src="{{ movie.video_file.url }}" type="video/mp4">
+                <source src="{{ movie.video_file.url }}" type="video/webm">
+                <source src="{{ movie.video_file.url }}" type="video/x-matroska">
+                Your browser does not support the video tag.
+            </video>
+        {% else %}
+            <!-- Fallback message when video file is not available -->
+            <div class="alert alert-danger mt-4" role="alert" style="text-align: center;">
+                <b>Sorry, this movie is not available for streaming.</b>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if not movie.video_file %}
+        <b><p>Uploading Soon!!!</p></b>
+    {% endif %}
+</div>
+
+<!-- Back Button -->
+<div class="d-flex justify-content-center mt-4">
+    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-outline-secondary home-button">🔙 Back to Details</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Check if Plyr is loaded
+        if (typeof Plyr === 'undefined') {
+            console.error("Plyr is not loaded!");
+            return;
+        }
+
+        console.log("Plyr is loaded successfully.");
+
+        // Initialize the Plyr player
+        const playerElement = document.getElementById('video-player');
+        const player = new Plyr(playerElement, {
+            controls: [
+                'rewind', 'play', 'fast-forward', 'progress', 'current-time',
+                'duration', 'mute', 'volume', 'captions', 'fullscreen'
+            ],
+            settings: ['captions', 'quality', 'speed'],
+            captions: { active: true, update: true, language: 'en' }
+        });
+
+        console.log("Player initialized:", player);
+
+        // Add buffering status
+        const bufferingIndicator = document.createElement('div');
+        bufferingIndicator.textContent = "Buffering...";
+        bufferingIndicator.style.display = "none";
+        bufferingIndicator.style.color = "orange";
+        bufferingIndicator.style.textAlign = "center";
+        playerElement.parentNode.insertBefore(bufferingIndicator, playerElement.nextSibling);
+
+        playerElement.addEventListener('waiting', () => {
+            bufferingIndicator.style.display = "block";
+        });
+
+        playerElement.addEventListener('canplay', () => {
+            bufferingIndicator.style.display = "none";
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function (event) {
+            const { key } = event;
+            switch (key) {
+                case 'ArrowLeft': // Rewind 10 seconds
+                    player.rewind(10);
+                    break;
+                case ' ': // Spacebar to Play/Pause
+                    player.togglePlay();
+                    break;
+                case 'ArrowRight': // Forward 10 seconds
+                    player.forward(10);
+                    break;
+                case 'ArrowUp': // Volume Up
+                    player.increaseVolume(0.1);
+                    break;
+                case 'ArrowDown': // Volume Down
+                    player.decreaseVolume(0.1);
+                    break;
+                case 'f': // Fullscreen toggle
+                    player.fullscreen.toggle();
+                    break;
+                case 'm': // Mute/Unmute
+                    player.muted = !player.muted;
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // Add mouse click events
+        playerElement.addEventListener('click', function () {
+            player.togglePlay();
+        });
+
+        playerElement.addEventListener('dblclick', function () {
+            player.fullscreen.toggle();
+        });
+
+        // Display player status in the console
+        player.on('play', () => console.log('Video started playing'));
+        player.on('pause', () => console.log('Video paused'));
+        player.on('ended', () => console.log('Video ended'));
+    });
+</script>
+{% endblock %}

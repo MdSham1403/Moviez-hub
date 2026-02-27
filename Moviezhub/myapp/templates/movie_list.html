@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* ================= VAULT CORE THEME ================= */
+    :root {
+        --gold: #ffca28;
+        --gold-glow: rgba(255, 202, 40, 0.3);
+        --slate-glass: rgba(15, 15, 15, 0.85);
+        --border-glass: rgba(255, 202, 40, 0.15);
+    }
+
+    body {
+        background: radial-gradient(circle at top, #1a1a1a, #050505);
+        color: #eee;
+        font-family: 'Montserrat', sans-serif;
+        padding-bottom: 80px; /* Space for mobile nav if you add it later */
+    }
+
+    /* ================= CINEMATIC HEADER ================= */
+    .vault-header {
+        padding: 40px 0 20px;
+        text-align: center;
+    }
+
+    .vault-title {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(2.2rem, 8vw, 3.8rem);
+        color: var(--gold);
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        text-shadow: 0 0 20px var(--gold-glow);
+        margin-bottom: 5px;
+    }
+
+    .small-caps {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.7rem;
+        opacity: 0.6;
+    }
+
+    /* ================= SEARCH & GLASSMISM ================= */
+    .search-section {
+        background: var(--slate-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        margin-bottom: 35px;
+    }
+
+    .search-bar {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+        border-radius: 12px 0 0 12px !important;
+        padding: 12px !important;
+    }
+
+    .search-btn {
+        background: var(--gold);
+        color: #000;
+        border: none;
+        border-radius: 0 12px 12px 0;
+        padding: 0 20px;
+        font-weight: 700;
+    }
+
+    .filter-select {
+        background: rgba(255,255,255,0.05) !important;
+        color: #fff !important;
+        border: 1px solid #333 !important;
+        border-radius: 10px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* ================= ELITE MOVIE GRID ================= */
+    .movie-card-rich {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .movie-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: #111;
+        aspect-ratio: 2 / 3; /* Keeps all posters uniform */
+    }
+
+    .movie-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.5s ease;
+    }
+
+    .movie-card-rich:hover {
+        transform: translateY(-8px);
+    }
+
+    .movie-card-rich:hover img {
+        transform: scale(1.1);
+        filter: brightness(0.7);
+    }
+
+    .movie-info {
+        padding: 10px 5px;
+    }
+
+    .movie-info h5 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    color: #fff;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 1;   /* Safari / older Chromium */
+    line-clamp: 1;          /* Standard property */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    }
+
+    .movie-info p {
+        font-size: 0.65rem;
+        color: var(--gold);
+        letter-spacing: 1px;
+        margin: 0;
+        opacity: 0.8;
+    }
+
+    /* ================= MOBILE OPTIMIZATION (POCO X7) ================= */
+    @media (max-width: 768px) {
+        .vault-title { font-size: 1.8rem; letter-spacing: 3px; }
+        
+        /* 2-column grid for mobile */
+        .row.g-4 {
+            --bs-gutter-x: 10px;
+            --bs-gutter-y: 15px;
+        }
+
+        .search-section {
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .movie-info h5 { font-size: 0.75rem; }
+    }
+
+    /* ================= PAGINATION ================= */
+    .pg-container {
+        margin: 40px 0;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-page {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: var(--slate-glass);
+        border: 1px solid var(--border-glass);
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn-page.active {
+        background: var(--gold);
+        color: #000;
+        border-color: var(--gold);
+        box-shadow: 0 0 15px var(--gold-glow);
+    }
+</style>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header class="vault-header text-center">
+        <h1 class="vault-title">THE VAULT</h1>
+        <p class="text-muted small-caps">Explore our curated collection of cinema</p>
+    </header>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'home' %}" class="btn-outline-gold px-3 py-2 text-decoration-none" style="font-size: 0.8rem;">
+            <i class="fas fa-arrow-left me-2"></i> HOME
+        </a>
+    </div>
+
+    <!-- SEARCH & FILTER -->
+    <div class="search-section mb-5">
+        <form method="GET">
+            <div class="row g-3">
+
+                <div class="col-lg-4">
+                    <div class="input-group">
+                        <input type="text"
+                               name="search"
+                               class="form-control search-bar"
+                               placeholder="Search by title..."
+                               value="{{ request.GET.search }}">
+                        <button class="search-btn" type="submit">🔍</button>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="row g-2">
+                        <div class="col-md-3 col-6">
+                            <select name="genre" class="form-select filter-select" onchange="this.form.submit()">
+                                <option value="">Genre</option>
+                                {% for genre in genres %}
+                                <option value="{{ genre }}" {% if request.GET.genre == genre %}selected{% endif %}>
+                                    {{ genre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 col-6">
+                            <select name="language" class="form-select filter-select" onchange="this.form.submit()">
+                                <option value="">Language</option>
+                                {% for language in languages %}
+                                <option value="{{ language }}" {% if request.GET.language == language %}selected{% endif %}>
+                                    {{ language }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 col-6">
+                            <select name="release_year" class="form-select filter-select" onchange="this.form.submit()">
+                                <option value="">Year</option>
+                                {% for year in release_years %}
+                                <option value="{{ year }}" {% if request.GET.release_year == year %}selected{% endif %}>
+                                    {{ year }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 col-6">
+                            <select name="sort_by" class="form-select filter-select" onchange="this.form.submit()">
+                                <option value="">Sort</option>
+                                <option value="release_year_desc" {% if request.GET.sort_by == 'release_year_desc' %}selected{% endif %}>
+                                    Newest
+                                </option>
+                                <option value="title_asc" {% if request.GET.sort_by == 'title_asc' %}selected{% endif %}>
+                                    A–Z
+                                </option>
+                                <option value="rating_desc" {% if request.GET.sort_by == 'rating_desc' %}selected{% endif %}>
+                                    Top Rated
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- MOVIES GRID -->
+    <div class="row g-4">
+        {% for movie in movies %}
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="movie-card-rich">
+                <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none">
+                    <div class="movie-card">
+                        {% if movie.poster %}
+                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                        {% elif movie.poster_url %}
+                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                        {% else %}
+                            <img src="{% static 'images/default_poster.jpg' %}" alt="N/A" class="movie-poster-detail">
+                        {% endif %}
+                        {% if movie.poster_display %}
+                            <img src="{{ movie.poster_display }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <p>No poster available</p>
+                        {% endif %}
+                    </div>
+                    <div class="movie-info">
+                        <h5>{{ movie.title }}</h5>
+                        <p>{{ movie.release_year }} • {{ movie.language|upper }}</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">No movies found in the vault.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- PAGINATION -->
+    {% with request.GET.urlencode as querystring %}
+    <div class="pg-container text-center">
+        {% if page_obj.paginator.num_pages > 1 %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="btn-page active">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}{% if querystring %}&{{ querystring|cut:'page=' }}{% endif %}"
+                       class="btn-page">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% endwith %}
+
+</div>
+{% endblock %}

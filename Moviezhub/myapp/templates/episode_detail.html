@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🎬 Theater Mode Background */
+    .theater-container {
+        padding-top: 40px;
+        padding-bottom: 60px;
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+        min-height: 100vh;
+    }
+
+    /* 📺 Video Glow Effect */
+    .video-glow-wrapper {
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(255, 215, 0, 0.1);
+        border: 1px solid var(--border-glass);
+        background: #000;
+    }
+
+    /* ✍️ Episode Branding */
+    .episode-header {
+        margin-bottom: 30px;
+    }
+
+    .series-title {
+        font-family: 'Cinzel', serif;
+        color: var(--gold);
+        letter-spacing: 3px;
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+
+    .episode-info {
+        color: #888;
+        font-family: 'Montserrat', sans-serif;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    /* 🎮 Custom Plyr Overrides */
+    :root {
+        --plyr-color-main: var(--gold); /* Changes player buttons to Gold */
+        --plyr-video-background: #000;
+    }
+
+    .plyr--video {
+        border-radius: 12px;
+    }
+
+    /* ⏳ Buffering State */
+    #buffering-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.7);
+        padding: 15px 25px;
+        border-radius: 50px;
+        color: var(--gold);
+        font-weight: 700;
+        z-index: 10;
+        border: 1px solid var(--gold);
+        pointer-events: none;
+    }
+
+    /* 🔙 Nav Buttons */
+    .btn-nav-vault {
+        color: var(--gold) !important;
+        border: 1px solid var(--border-glass);
+        background: var(--slate-glass);
+        padding: 10px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: 0.3s;
+        font-size: 0.85rem;
+    }
+
+    .btn-nav-vault:hover {
+        background: var(--gold);
+        color: #000 !important;
+    }
+</style>
+
+<div class="theater-container">
+    <div class="container">
+        <div class="mb-4">
+            <a href="{% url 'season_list' series_id=episode.season.series.id %}" class="btn-nav-vault">
+                <i class="fas fa-chevron-left me-2"></i> BACK TO SEASONS
+            </a>
+        </div>
+
+        <div class="episode-header text-center">
+            <h2 class="series-title">{{ episode.season.series.title }}</h2>
+            <p class="episode-info">
+                Season {{ episode.season.season_number }} <span class="mx-2">|</span> 
+                Episode {{ episode.episode_number }}: {{ episode.title|default:"Untitled" }}
+            </p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+                <div class="video-glow-wrapper">
+                    
+                    <div id="buffering-indicator" style="display: none;">
+                        <i class="fas fa-spinner fa-spin me-2"></i> SECURING STREAM...
+                    </div>
+
+                    {% if episode.video_file %}
+                        <video id="video-player" playsinline controls
+                            {% if episode.season.series.thumbnail %}
+                            poster="{{ episode.season.series.thumbnail.url }}"
+                            {% endif %}>
+                            <source src="{{ episode.video_file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% else %}
+                        <div class="text-center p-5">
+                            <i class="fas fa-film fa-4x text-muted mb-3"></i>
+                            <h3 class="text-white">Episode Encrypted</h3>
+                            <p class="text-gold">UPLOADING TO VAULT SOON</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-4 d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        <i class="fas fa-eye me-1"></i> Recorded in your Archive
+                    </div>
+                    <div class="text-gold">
+                        <i class="fas fa-closed-captioning me-1"></i> CC Available
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
+<script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const playerElement = document.getElementById('video-player');
+        if (!playerElement) return;
+
+        // Initialize Plyr with Gold Theme
+        const player = new Plyr(playerElement, {
+            controls: [
+                'play-large', 'play', 'progress', 'current-time', 
+                'mute', 'volume', 'captions', 'settings', 'fullscreen'
+            ],
+            tooltips: { controls: true, seek: true }
+        });
+
+        const buffer = document.getElementById('buffering-indicator');
+
+        // Buffering Logic
+        player.on('waiting', () => { buffer.style.display = "block"; });
+        player.on('playing', () => { buffer.style.display = "none"; });
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'f') player.fullscreen.toggle();
+            if (e.key === ' ') { e.preventDefault(); player.togglePlay(); }
+            if (e.key === 'ArrowRight') player.forward(10);
+            if (e.key === 'ArrowLeft') player.rewind(10);
+        });
+    });
+</script>
+{% endblock %}

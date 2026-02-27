@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 🌌 Page Layout */
+    .updates-page-wrapper {
+        padding: 60px 20px;
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: #080808;
+    }
+
+    .updates-header {
+        font-family: 'Cinzel', serif;
+        color: #ffca28;
+        letter-spacing: 3px;
+        margin-bottom: 50px;
+        text-transform: uppercase;
+    }
+
+    /* 💎 News Card Style */
+    .update-log-card {
+        background: #111;
+        border: 1px solid #222;
+        border-radius: 25px;
+        padding: 30px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        transition: 0.3s;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .update-log-card:hover {
+        border-color: #ffca28;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 40px rgba(255, 202, 40, 0.05);
+    }
+
+    /* 🖼️ Curved Image Style */
+    .update-img-wrapper {
+        width: 150px;
+        height: 150px;
+        min-width: 150px;
+        border-radius: 20px; /* Matching your curved border style */
+        overflow: hidden;
+        border: 1px solid #333;
+    }
+
+    .update-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* 📝 Text Styles */
+    .update-timestamp {
+        color: #ffca28;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .update-log-title {
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .update-log-desc {
+        color: #aaa;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    /* 🔘 Action Button */
+    .btn-view-now {
+        background: #ffca28;
+        color: #000;
+        padding: 10px 25px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: inline-block;
+        transition: 0.3s;
+    }
+
+    .btn-view-now:hover {
+        background: #fff;
+        transform: scale(1.05);
+    }
+
+    /* 📱 Mobile Responsive */
+    @media (max-width: 768px) {
+        .update-log-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+        .update-img-wrapper {
+            width: 100%;
+            height: 200px;
+        }
+    }
+</style>
+
+<div class="updates-page-wrapper">
+    <div class="text-center">
+        <h2 class="updates-header">Latest News & Updates</h2>
+        <p style="color: #666; margin-top: -40px; margin-bottom: 50px;">Stay updated with new releases and upcoming movies.</p>
+    </div>
+
+    {% if updates %}
+        {% for update in updates %}
+            <div class="update-log-card">
+                
+                {% if update.image %}
+                    <div class="update-img-wrapper">
+                        <img src="{{ update.image.url }}" alt="Update Image" class="update-img">
+                    </div>
+                {% else %}
+                    <div class="update-img-wrapper d-flex align-items-center justify-content-center" style="background: #1a1a1a;">
+                        <i class="bi bi-megaphone text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="update-content">
+                    <span class="update-timestamp">
+                        <i class="bi bi-calendar3 me-1"></i> Posted on {{ update.created_at|date:"d M Y" }}
+                    </span>
+                    
+                    <h4 class="update-log-title">{{ update.title }}</h4>
+                    <p class="update-log-desc">{{ update.description }}</p>
+
+                    {% if update.movie_link %}
+                        <a href="{{ update.movie_link }}" class="btn-view-now">
+                            View Movie
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-info-circle text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3">Nothing new to show right now. Check back soon!</p>
+            <a href="{% url 'home' %}" class="btn-view-now mt-2">Go Home</a>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-5">
+        <a href="{% url 'home' %}" style="color: #666; text-decoration: none; font-size: 0.9rem;">
+            ← Back to Home
+        </a>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+{% endblock %}

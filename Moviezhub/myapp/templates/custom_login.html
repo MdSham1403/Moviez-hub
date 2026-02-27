@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Specific alignment for the login portal */
+    .login-wrapper {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .rich-login-card {
+        width: 100%;
+        max-width: 450px;
+        padding: 50px 40px;
+        /* Uses the Glassmorphism from your Full CSS */
+    }
+
+    .portal-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .portal-header h2 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        color: var(--gold);
+    }
+
+    .portal-header p {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    /* Floating Label Logic */
+    .input-group-rich {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .input-group-rich input {
+        width: 100%;
+        /* Inherits form-control styles from your Full CSS */
+    }
+
+    .input-group-rich label {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        transition: 0.3s ease;
+        pointer-events: none;
+        opacity: 0.5;
+        margin-bottom: 0; /* Reset default label margin */
+    }
+
+    .input-group-rich input:focus ~ label,
+    .input-group-rich input:valid ~ label {
+        top: -12px;
+        left: 15px;
+        font-size: 0.7rem;
+        color: var(--gold);
+        opacity: 1;
+        background: #111; /* Matches background to 'cut' through the border */
+        padding: 0 8px;
+    }
+
+    .forgot-password {
+        display: block;
+        text-align: right;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-top: -15px;
+        margin-bottom: 25px;
+        transition: 0.3s;
+    }
+
+    .forgot-password:hover {
+        color: var(--gold);
+    }
+
+    .register-footer {
+        margin-top: 30px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        padding-top: 20px;
+        font-size: 0.85rem;
+    }
+
+    .register-footer a {
+        color: var(--gold);
+        text-decoration: none;
+        font-weight: 700;
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="rich-card rich-login-card">
+        <div class="portal-header">
+            <h2>Access Portal</h2>
+            <p>Moviez Hub Executive</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="input-group-rich">
+                <input type="text" name="username" id="username" class="form-control" required>
+                <label for="username">Username</label>
+            </div>
+
+            <div class="input-group-rich">
+                <input type="password" name="password" id="password" class="form-control" required>
+                <label for="password">Security Key</label>
+            </div>
+
+            <a href="#" class="forgot-password">Recovery Access?</a>
+
+            <button type="submit" class="btn-premium w-100">Authorize Login</button>
+        </form>
+
+        <div class="register-footer text-center">
+            <span class="text-muted">New Spectator?</span>
+            <a href="{% url 'register' %}">Request Membership</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
