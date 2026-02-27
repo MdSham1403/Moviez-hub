@@ -32,8 +32,12 @@
         height: 350px;
         object-fit: cover;
         border-bottom: 1px solid var(--border-glass);
+        background-color: #222; /* Dark placeholder */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
     }
-
     .watchlist-movie-title {
         color: #fff;
         font-weight: 700;
@@ -74,8 +78,89 @@
         border-radius: 20px;
         color: #ddd;
     }
-</style>
+    /* =========================================
+       MOBILE RESPONSIVENESS (768px & Below)
+    ========================================= */
+/* =========================================
+       7. MOBILE RESPONSIVENESS (768px & Below)
+    ========================================= */
+    @media (max-width: 768px) {
+        .container.mt-5 {
+            margin-top: 20px !important;
+            padding-bottom: 40px;
+        }
 
+        .watchlist-title {
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        /* Adjust card spacing for tight mobile screens */
+        .row.g-4 {
+            --bs-gutter-x: 10px; /* Thinner gap between cards */
+        }
+
+        .watchlist-poster {
+            height: 240px; /* Prevents long vertical scrolling */
+        }
+
+        .watchlist-movie-title {
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* Fix the footer buttons for mobile */
+        .card-footer {
+            padding: 0 8px 15px !important;
+            flex-direction: column; /* Stack Play and Trash for better click area */
+            gap: 10px !important;
+        }
+
+        .btn-vault-watch {
+            width: 100%;
+            order: 1; /* Play button first */
+        }
+
+        .btn-vault-remove {
+            width: 100%;
+            background: rgba(255, 77, 77, 0.05) !important;
+            border-color: rgba(255, 77, 77, 0.3);
+            order: 2;
+        }
+
+        /* Premium Bottom Navigation Styling */
+        .mobile-footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .nav-pill-link {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffca28 !important;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none !important;
+            transition: 0.3s;
+        }
+        
+        .nav-pill-link i {
+            margin-right: 5px;
+        }
+    }
+
+    /* Hide Desktop footer on mobile and vice versa */
+    @media (min-width: 769px) {
+        .mobile-footer-nav { display: none; }
+    }
+</style>
 <div class="container mt-5">
     <h2 class="text-center watchlist-title">
         <i class="fas fa-heart me-2"></i> YOUR CURATED VAULT
@@ -116,25 +201,30 @@
             {% endfor %}
         </div>
     {% else %}
-        <div class="text-center empty-vault-box shadow-lg">
-            <i class="fas fa-film fa-3x text-gold mb-4"></i>
-            <h3>Your archive is empty</h3>
-            <p class="mb-4">Begin selecting titles from the main vault to curate your collection.</p>
-            <a href="{% url 'movie_list' %}" class="btn-premium-watch px-5">BROWSE VAULT</a>
-        </div>
-    {% endif %}
+        {% endif %}
 
-    <div class="text-center mt-5">
-        <hr class="border-secondary mb-4">
-        <a href="{% url 'home' %}" class="text-gold text-decoration-none mx-3 small">
-            <i class="fas fa-home me-1"></i> HOME
-        </a>
-        <a href="{% url 'movie_list' %}" class="text-gold text-decoration-none mx-3 small">
-            <i class="fas fa-chevron-left me-1"></i> BACK TO MOVIES
-        </a>
+    <div class="mt-5 mb-5">
+        <hr class="border-secondary opacity-25">
+        
+        <div class="mobile-footer-nav d-md-none">
+            <a href="{% url 'home' %}" class="nav-pill-link">
+                <i class="fas fa-home"></i> HOME
+            </a>
+            <a href="{% url 'movie_list' %}" class="nav-pill-link">
+                <i class="fas fa-arrow-left"></i> BACK
+            </a>
+        </div>
+
+        <div class="text-center d-none d-md-block">
+            <a href="{% url 'home' %}" class="text-gold text-decoration-none mx-3 small opacity-75 hover-opacity-100">
+                <i class="fas fa-home me-1"></i> HOME
+            </a>
+            <a href="{% url 'movie_list' %}" class="text-gold text-decoration-none mx-3 small opacity-75 hover-opacity-100">
+                <i class="fas fa-chevron-left me-1"></i> BACK TO MOVIES
+            </a>
+        </div>
     </div>
 </div>
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".remove-watchlist-btn").forEach(button => {

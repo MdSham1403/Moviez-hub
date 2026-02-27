@@ -222,7 +222,19 @@
     .danger-link:hover {
         color: #ff4d4d;
     }
-
+/* Add this to your CSS for the Cropper Modal */
+    .modal-overlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center;
+    }
+    .cropper-container-box {
+        background: #1a1a1a; padding: 20px; border-radius: 15px; max-width: 90%; width: 500px;
+    }
+    .crop-preview-area { max-height: 400px; margin-bottom: 20px; }
+    .btn-crop-confirm { background: #ffd700; color: #000; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+    
+    /* Improve your existing file input styling */
+    .file-input-wrapper { position: relative; overflow: hidden; }
     /* --- MOBILE RESPONSIVENESS --- */
 /* --- POCO X7 & MOBILE OPTIMIZATION --- */
     @media (max-width: 550px) {
@@ -296,6 +308,62 @@
             grid-template-columns: 1fr; /* Stack only on very tiny widths */
         }
     }
+    /* 🌀 Premium Loading Overlay */
+    .submit-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(5px);
+        z-index: 2000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .spinner-gold {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255, 215, 0, 0.1);
+        border-top: 3px solid var(--gold, #ffd700);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+        color: var(--gold, #ffd700);
+        font-family: 'Cinzel', serif;
+        letter-spacing: 2px;
+        font-size: 0.8rem;
+    }
+
+    /* Disable button state */
+    .btn-gold:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    /* 🌀 Spinner & Modal Styles */
+    .submit-overlay, .modal-overlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); z-index: 2000;
+        flex-direction: column; align-items: center; justify-content: center;
+    }
+    .spinner-gold {
+        width: 50px; height: 50px; border: 3px solid rgba(255, 215, 0, 0.1);
+        border-top: 3px solid #ffd700; border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    
+    .cropper-box { background: #1a1a1a; padding: 20px; border-radius: 15px; width: 90%; max-width: 450px; text-align: center; }
+    .crop-area { max-height: 350px; overflow: hidden; margin-bottom: 15px; background: #000; }
+    #image-to-crop { max-width: 100%; }
 </style>
 
 <div class="edit-profile-container">
@@ -305,7 +373,7 @@
             <span class="rich-subtitle">Design Your Identity</span>
         </div>
 
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="profile-form">
             {% csrf_token %}
             
             <div class="field-wrapper">
@@ -319,20 +387,22 @@
             </div>
 
             <div class="field-wrapper">
-                <label>Base Location</label>
-                <input type="text" name="location" value="{{ profile_form.instance.location }}" placeholder="e.g. Tokyo, JP">
+                <label>User Name</label>
+                <input type="text" name="username" value="{{ user_form.instance.username }}">
             </div>
 
             <label class="field-wrapper" style="color:#ffd700; font-size: 0.65rem; margin-bottom: 10px;">Visual Avatar</label>
             <div class="image-edit-section">
-                {% if user.profile.profile_picture %}
-                    <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="preview-img">
-                {% else %}
-                    <img src="{% static 'images/default-profile.jpg' %}" alt="Default" class="preview-img">
-                {% endif %}
+                <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}" 
+     alt="Profile" 
+     class="preview-img" 
+     id="avatar-preview"
+     onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=1a1a1a&color=ffd700&size=128';">
                 
                 <div class="file-input-wrapper">
-                    <input type="file" name="profile_picture" class="file-input-custom mb-1">
+                    <input type="file" id="avatar-input" accept="image/*" class="file-input-custom mb-1">
+                    <input type="hidden" name="cropped_image" id="cropped-image-data">
+
                     {% if user.profile.profile_picture %}
                     <div style="font-size: 0.65rem; color: rgba(255, 77, 77, 0.7); margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px;">
                         <input type="checkbox" name="delete_profile_picture" id="delete_profile_picture"> 
@@ -350,10 +420,67 @@
                 <a href="{% url 'change_password' %}" class="action-btn">🛡 Credentials</a>
             </div>
         </form>
-
-        <div class="danger-zone">
-            <a href="{% url 'deactivate_account' %}" class="danger-link">Retire Account (Deactivate)</a>
-        </div>
     </div>
 </div>
+
+<div id="cropper-modal" class="modal-overlay">
+    <div class="cropper-box">
+        <div class="crop-area"><img id="image-to-crop"></div>
+        <button type="button" id="apply-crop" class="btn-gold" style="width:100%">Confirm Crop</button>
+    </div>
+</div>
+
+<div id="loading-overlay" class="submit-overlay">
+    <div class="spinner-gold"></div>
+    <div style="color:#ffd700; margin-top:15px; font-size:0.7rem; letter-spacing:2px">UPLOADING TO VAULT...</div>
+</div>
+<script>document.addEventListener("DOMContentLoaded", function() {
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+    const cropperModal = document.getElementById('cropper-modal');
+    const imageToCrop = document.getElementById('image-to-crop');
+    const applyCropBtn = document.getElementById('apply-crop');
+    const croppedDataInput = document.getElementById('cropped-image-data');
+    const profileForm = document.getElementById('profile-form');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const submitBtn = document.querySelector('.btn-gold');
+    let cropper;
+
+    // 1. Detect Image Selection
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imageToCrop.src = event.target.result;
+                cropperModal.style.display = 'flex';
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(imageToCrop, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 2. Apply the Crop
+    applyCropBtn.addEventListener('click', function() {
+        const canvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
+        const base64Image = canvas.toDataURL('image/jpeg');
+        
+        croppedDataInput.value = base64Image; // Store in hidden input
+        avatarPreview.src = base64Image; // Show user the result
+        cropperModal.style.display = 'none';
+        cropper.destroy();
+    });
+
+    // 3. Handle Submit & Loading Spinner
+    profileForm.addEventListener('submit', function() {
+        loadingOverlay.style.display = 'flex';
+        submitBtn.disabled = true;
+        submitBtn.innerText = "SAVING...";
+    });
+});
+</script>
 {% endblock %}

@@ -39,6 +39,7 @@
         letter-spacing: 2px;
         font-size: 0.7rem;
         opacity: 0.6;
+        color: #ffffff
     }
 
     /* ================= SEARCH & GLASSMISM ================= */
@@ -133,6 +134,66 @@
         opacity: 0.8;
     }
 
+    /* Fix search placeholder color */
+    .search-bar::placeholder {
+        color: #666;              /* dark gray */
+        opacity: 1;              /* ensure visible */
+    }
+
+    /* Fix dropdown background + text */
+    .filter-select {
+        background-color: #000 !important;
+        color: #fff !important;
+        border: 1px solid #444;
+    }
+
+    /* When dropdown is focused / clicked */
+    .filter-select:focus {
+        background-color: #000 !important;
+        color: #fff !important;
+        border-color: #888;
+        box-shadow: none;
+    }
+
+    /* Dropdown options */
+    .filter-select option {
+        background-color: #000;
+        color: #fff;
+    }
+
+    /* On hover (works in some browsers) */
+    .filter-select option:hover {
+        background-color: #222;
+    }
+/* PAGINATION GLOW STYLE */
+.pagination .page-link {
+    background-color: #0f172a !important; /* Deep dark blue/black */
+    color: #ffca28 !important;            /* Gold text */
+    border: 1px solid rgba(255, 202, 40, 0.2) !important;
+    margin: 0 5px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Hover State with Glow */
+.pagination .page-link:hover {
+    background-color: rgba(255, 202, 40, 0.1) !important;
+    color: #fff !important;
+    border-color: #ffca28 !important;
+    /* This creates the glow effect */
+    box-shadow: 0 0 15px rgba(255, 202, 40, 0.6); 
+    transform: translateY(-3px);
+}
+
+/* Active Page (Current) with Persistent Glow */
+.pagination .page-item.active .page-link {
+    background: linear-gradient(45deg, #ffca28, #ff8f00) !important;
+    color: #000 !important;
+    border: none !important;
+    box-shadow: 0 0 20px rgba(255, 202, 40, 0.8);
+}
     /* ================= MOBILE OPTIMIZATION (POCO X7) ================= */
     @media (max-width: 768px) {
         .vault-title { font-size: 1.8rem; letter-spacing: 3px; }
@@ -179,6 +240,7 @@
         border-color: var(--gold);
         box-shadow: 0 0 15px var(--gold-glow);
     }
+/* 🔍 Search Bar & Dropdown Customization */
 </style>
 
 <div class="container">
@@ -186,7 +248,9 @@
     <!-- HEADER -->
     <header class="vault-header text-center">
         <h1 class="vault-title">THE VAULT</h1>
-        <p class="text-muted small-caps">Explore our curated collection of cinema</p>
+           <p class="text-muted small-caps" style="color: white !important;">
+                Explore our curated collection of cinema
+            </p>
     </header>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -267,57 +331,54 @@
         </form>
     </div>
 
-    <!-- MOVIES GRID -->
-    <div class="row g-4">
-        {% for movie in movies %}
-        <div class="col-6 col-md-3 col-lg-2">
-            <div class="movie-card-rich">
-                <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none">
-                    <div class="movie-card">
-                        {% if movie.poster %}
-                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail">
-                        {% elif movie.poster_url %}
-                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail">
-                        {% else %}
-                            <img src="{% static 'images/default_poster.jpg' %}" alt="N/A" class="movie-poster-detail">
-                        {% endif %}
-                        {% if movie.poster_display %}
-                            <img src="{{ movie.poster_display }}" alt="{{ movie.title }}">
-                        {% else %}
-                            <p>No poster available</p>
-                        {% endif %}
-                    </div>
-                    <div class="movie-info">
-                        <h5>{{ movie.title }}</h5>
-                        <p>{{ movie.release_year }} • {{ movie.language|upper }}</p>
-                    </div>
-                </a>
-            </div>
+<div class="row g-4">
+    {% for movie in movies %}
+    <div class="col-6 col-md-3 col-lg-2">
+        <div class="movie-card-rich">
+            <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none">
+                <div class="movie-card">
+                    {% if movie.poster %}
+                        <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                    {% elif movie.poster_url %}
+                        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+                    {% else %}
+                        <img src="{% static 'images/default_poster.jpg' %}" alt="N/A" class="movie-poster-detail">
+                    {% endif %}
+                    
+                    {# Removed duplicate poster and misplaced pagination from here #}
+                </div>
+                <div class="movie-info">
+                    <h5>{{ movie.title }}</h5>
+                    <p>{{ movie.release_year }} • {{ movie.language|upper }}</p>
+                </div>
+            </a>
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <p class="text-muted">No movies found in the vault.</p>
-        </div>
-        {% endfor %}
     </div>
-
-    <!-- PAGINATION -->
-    {% with request.GET.urlencode as querystring %}
-    <div class="pg-container text-center">
-        {% if page_obj.paginator.num_pages > 1 %}
-            {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                    <span class="btn-page active">{{ num }}</span>
-                {% else %}
-                    <a href="?page={{ num }}{% if querystring %}&{{ querystring|cut:'page=' }}{% endif %}"
-                       class="btn-page">
-                        {{ num }}
-                    </a>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted">No movies found in the vault.</p>
+    </div>
+    {% endfor %}
+</div>
+<div class="pagination-wrapper mt-5 mb-5">
+    <nav aria-label="Movie pagination">
+        <ul class="pagination justify-content-center">
+            
+            {% for num in movies.paginator.page_range %}
+                {% if movies.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > movies.number|add:'-4' and num < movies.number|add:'4' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&search={{ search_query }}&genre={{ selected_genre }}&sort_by={{ selected_sort }}">
+                            {{ num }}
+                        </a>
+                    </li>
                 {% endif %}
             {% endfor %}
-        {% endif %}
-    </div>
-    {% endwith %}
 
+        </ul>
+    </nav>
 </div>
 {% endblock %}

@@ -48,9 +48,13 @@
     .cast-name { font-size: 0.85rem; font-weight: 700; color: #fff; margin: 0; }
     .cast-role { font-size: 0.75rem; color: var(--gold); opacity: 0.8; }
     .btn-action-group { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
-    .btn-premium-watch { background: var(--gold); color: #000 !important; font-weight: 700; padding: 12px 35px; border-radius: 50px; text-decoration: none; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
-    .btn-premium-watch:hover { transform: translateY(-3px); background: #fff; }
-    
+    .btn-premium-watch { background: var(--gold); color: #ffffff !important; font-weight: 700; padding: 12px 35px; border-radius: 50px; text-decoration: none; transition: 0.3s; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+    .btn-premium-watch:hover { 
+        transform: translateY(-3px); 
+        background: #ffffff; 
+        color: #000000 !important; /* Keeps text black on the new white background */
+        box-shadow: 0 5px 25px rgba(255, 255, 255, 0.2);
+    }    
     .btn-outline-gold {
         background: transparent !important;
         color: #ffd700 !important;
@@ -83,11 +87,56 @@
     }
     .slide-notif.show { transform: translateX(0); }
 
+    /* Mobile Top Nav Buttons */
+    .btn-mobile-nav {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffd700 !important;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        padding: 8px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        backdrop-filter: blur(5px);
+    }
+    .btn-mobile-nav:active {
+        background: var(--gold);
+        color: #000 !important;
+    }
+    /* Premium Mobile Nav Styling */
+    .mobile-top-nav {
+        padding: 10px 5px;
+        width: 100%;
+    }
+    
+    .nav-glass-btn {
+        background: rgba(255, 255, 255, 0.03) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 215, 0, 0.4) !important;
+        color: #ffd700 !important;
+        padding: 10px 22px;
+        border-radius: 12px; /* Matching your poster/box radius */
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-decoration: none !important;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-glass-btn:active {
+        background: rgba(255, 215, 0, 0.2) !important;
+        transform: scale(0.95);
+    }
     /* =========================================
    MOBILE RESPONSIVENESS (Explore-Style Sync)
    Targeting screens 768px and smaller
-   ========================================= */
-@media (max-width: 768px) {
+    ========================================= */
+    @media (max-width: 768px) {
     /* 1. Center the entire hero section */
     .hero-section {
         padding: 30px 15px 80px;
@@ -164,21 +213,35 @@
 </style>
 
 <div class="container hero-section">
+    <div class="mobile-top-nav d-flex d-md-none justify-content-between align-items-center mb-4">
+        <a href="javascript:history.back()" class="nav-glass-btn">
+            <i class="fas fa-arrow-left me-2"></i>BACK
+        </a>
+        <a href="{% url 'home' %}" class="nav-glass-btn">
+            HOME <i class="fas fa-house-chimney ms-2"></i>
+        </a>
+    </div>
+
+    <div class="row align-items-center">
     <div class="row align-items-center">
         <div class="col-lg-5 text-center mb-5 mb-lg-0">
-            <div class="position-relative d-inline-block">
-                {% if movie.poster %}
-                    <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail">
-                {% elif movie.poster_url %}
-                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail">
-                {% else %}
-                    <img src="{% static 'images/default_poster.jpg' %}" alt="N/A" class="movie-poster-detail">
-                {% endif %}
-            <div class="badge bg-dark border border-gold position-absolute top-0 end-0 m-3 px-3 py-2" style="font-size: 1rem;">
-                    ⭐ {{ movie.rating }}
-                </div>
-            </div>
+    <div class="position-relative d-inline-block">
+        {% if movie.poster %}
+            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail" 
+                 onerror="this.onerror=null;this.src='https://placehold.jp/40/1a1a1a/ffd700/600x900.png?text={{ movie.title|urlencode }}';">
+        {% elif movie.poster_url %}
+            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail" 
+                 onerror="this.onerror=null;this.src='https://placehold.jp/40/1a1a1a/ffd700/600x900.png?text={{ movie.title|urlencode }}';">
+        {% else %}
+            <img src="{% static 'images/default_poster.jpg' %}" alt="N/A" class="movie-poster-detail"
+                 onerror="this.onerror=null;this.src='https://placehold.jp/40/1a1a1a/ffd700/600x900.png?text=VAULT%20PREMIUM';">
+        {% endif %}
+
+        <div class="badge bg-dark border border-gold position-absolute top-0 end-0 m-3 px-3 py-2" style="font-size: 1rem;">
+            ⭐ {{ movie.rating }}
         </div>
+    </div>
+</div>
 
         <div class="col-lg-7">
             <h1 class="detail-title">{{ movie.title }}</h1>
@@ -235,7 +298,7 @@
         </div>
         
         <div class="mt-4">
-            <a href="javascript:history.back()" style="color: #3498db; text-decoration: none; font-size: 1rem;">
+            <a href="{% url 'home' %}" style="color: #3498db; text-decoration: none; font-size: 1rem;">
                 <i class="fas fa-arrow-left"></i> Back to Movies
             </a>
         </div>

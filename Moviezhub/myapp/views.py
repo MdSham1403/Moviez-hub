@@ -21,6 +21,8 @@ from PIL import Image
 from moviepy.editor import VideoFileClip
 from .models import MovieRequest
 from dotenv import load_dotenv
+import base64
+from django.core.files.base import ContentFile
 
 from .forms import (
     MovieUploadForm,
@@ -163,67 +165,57 @@ def custom_login(request):
 
 @login_required
 def movie_list(request):
-    # Get filters and search query from the request
     search_query = request.GET.get('search', '')
     genre_filter = request.GET.get('genre', '')
     language_filter = request.GET.get('language', '')
     release_year_filter = request.GET.get('release_year', '')
     sort_by = request.GET.get('sort_by', '')
 
-    # Get distinct genres, languages, and release years for filters
     genres = Movie.objects.values_list('genre__name', flat=True).distinct()
     languages = Movie.objects.values_list('language', flat=True).distinct()
     release_years = Movie.objects.values_list('release_year', flat=True).distinct().order_by('-release_year')
 
-    # Start with all movies
     movies = Movie.objects.all()
 
-    # Apply search filter
     if search_query:
         movies = movies.filter(Q(title__icontains=search_query) | Q(description__icontains=search_query))
-
-    # Apply genre filter
     if genre_filter:
         movies = movies.filter(genre__name__icontains=genre_filter)
-
-    # Apply language filter
     if language_filter:
         movies = movies.filter(language=language_filter)
-
-    # Apply release year filter
     if release_year_filter:
         movies = movies.filter(release_year=release_year_filter)
 
-    # Apply sorting
-    if sort_by == 'release_year_asc':
-        movies = movies.order_by('release_year')
-    elif sort_by == 'release_year_desc':
-        movies = movies.order_by('-release_year')
-    elif sort_by == 'title_asc':
-        movies = movies.order_by('title')
-    elif sort_by == 'title_desc':
-        movies = movies.order_by('-title')
-    elif sort_by == 'rating_desc':
-        movies = movies.order_by('-rating')
-    elif sort_by == 'rating_asc':
-        movies = movies.order_by('rating')
+    # Default sort if none provided
+    if sort_by:
+        sort_map = {
+            'release_year_asc': 'release_year',
+            'release_year_desc': '-release_year',
+            'title_asc': 'title',
+            'title_desc': '-title',
+            'rating_desc': '-rating',
+            'rating_asc': 'rating',
+        }
+        movies = movies.order_by(sort_map.get(sort_by, '-id'))
+    else:
+        movies = movies.order_by('-id')
 
-    # Paginate the movies list, 20 per page
-    paginator = Paginator(movies, 20)  # Show 20 movies per page
-    page_number = request.GET.get('page')  # Get the page number from the URL
-    page_obj = paginator.get_page(page_number)  # Get the movies for the current page
+    paginator = Paginator(movies, 18) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    # Pass the movies and pagination info to the template
     context = {
-        'movies': page_obj,  # Use 'movies' (plural) to match your template list
+        'movies': page_obj, # This is your 'page_obj'
         'genres': genres,
         'languages': languages,
         'release_years': release_years,
+        # Pass these back so the search bar stays filled
         'search_query': search_query,
+        'selected_genre': genre_filter,
+        'selected_year': release_year_filter,
+        'selected_sort': sort_by,
     }
-
     return render(request, 'movie_list.html', context)
-
 @login_required
 @csrf_exempt
 def update_stream_progress(request, stream_id):
@@ -358,28 +350,43 @@ def profile_view(request):
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        user_form = UserUpdateForm(request.POST, instance=request.user)  # Add UserUpdateForm
+        user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
 
         if user_form.is_valid() and profile_form.is_valid():
-            # If the delete checkbox is checked, set profile_picture to None
+            # 1. Handle Profile Picture Deletion
             if 'delete_profile_picture' in request.POST:
                 request.user.profile.profile_picture = None
-                request.user.profile.save()
             
-            user_form.save()  # Save the user updates (including first_name)
-            profile_form.save()  # Save the profile updates
-            messages.success(request, "Your profile has been updated successfully!")
+            # 2. Handle Cropped Image from Cropper.js
+            cropped_data = request.POST.get('cropped_image')
+            if cropped_data and cropped_data.startswith('data:image'):
+                try:
+                    # Parse the base64 string
+                    format, imgstr = cropped_data.split(';base64,')
+                    ext = format.split('/')[-1]
+                    # Create a ContentFile that Django/Cloudinary can save
+                    data = ContentFile(base64.b64decode(imgstr), name=f"user_avatar_{request.user.id}.{ext}")
+                    request.user.profile.profile_picture = data
+                except Exception as e:
+                    messages.error(request, f"Image processing error: {e}")
+
+            # 3. Save Forms
+            user_form.save()
+            profile_form.save()
+            
+            messages.success(request, "Your identity has been updated in the cloud vault!")
             return redirect('edit_profile')
         else:
             messages.error(request, "Please correct the errors below.")
     else:
-        user_form = UserUpdateForm(instance=request.user)  # Use UserUpdateForm for user fields
+        user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=request.user.profile)
 
-    return render(request, 'edit_profile.html', {'user_form': user_form, 'profile_form': profile_form})
-
-
+    return render(request, 'edit_profile.html', {
+        'user_form': user_form, 
+        'profile_form': profile_form
+    })
 
 @login_required
 def change_password(request):

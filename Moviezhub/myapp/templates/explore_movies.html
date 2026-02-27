@@ -5,28 +5,22 @@
 <style>
     /* =========================================
        1. GLOBAL PAGE SETUP 
-       Sets the dark background and centers content
-       ========================================= */
+    ========================================= */
     .explore-section {
-        padding: 40px 15px 100px;
+        padding: 40px 15px;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
-        align-items: center; /* Horizontal Center */
-        justify-content: center; /* Vertical Center */
         background: radial-gradient(circle at top right, #1a1a1a, #080808);
+        color: white;
     }
 
-    /* =========================================
-       2. TOP NAVIGATION (HOME BUTTON)
-       The link that takes users back to the homepage
-       ========================================= */
     .top-nav-row {
         width: 100%;
-        max-width: 800px;
-        margin-bottom: 40px;
+        max-width: 1100px;
+        margin: 0 auto 40px;
         display: flex;
-        justify-content: flex-start; /* Desktop: Align Left */
+        justify-content: flex-start;
     }
 
     .btn-home-link {
@@ -42,38 +36,47 @@
     }
 
     .btn-home-link:hover {
-        color: #ffca28; /* Gold on hover */
+        color: #ffca28;
         opacity: 1;
     }
 
+    /* Centralizes the content blocks */
+    .view-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+        width: 100%;
+    }
+
     /* =========================================
-       3. FIRST SCREEN: CHOICE CARDS 
-       The two big buttons: "All Movies" & "By Language"
-       ========================================= */
+       2. CHOICE CARDS (GATEWAY)
+    ========================================= */
     .gateway-container {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Side by side on desktop */
-        gap: 20px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
         width: 100%;
-        max-width: 800px;
+        max-width: 850px;
         animation: fadeIn 0.5s ease;
     }
 
     .gateway-card {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 215, 0, 0.2);
-        border-radius: 20px;
-        padding: 40px 20px;
+        border-radius: 24px;
+        padding: 60px 20px;
         text-align: center;
-        text-decoration: none;
-        transition: 0.3s;
+        text-decoration: none !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(10px);
     }
 
     .gateway-card:hover {
-        background: rgba(255, 215, 0, 0.1);
+        background: rgba(255, 215, 0, 0.08);
         border-color: #ffca28;
-        transform: translateY(-5px); /* Lift effect */
-        box-shadow: 0 10px 30px rgba(255, 202, 40, 0.2);
+        transform: translateY(-10px);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
     }
 
     .gateway-icon {
@@ -97,45 +100,42 @@
     }
 
     /* =========================================
-       4. SECOND SCREEN: LANGUAGE SELECTION
-       The view that shows after clicking "By Language"
-       ========================================= */
+       3. LANGUAGE VIEW
+    ========================================= */
     #language-view {
-        display: none; /* Hidden until clicked */
+        display: none;
         width: 100%;
         max-width: 1100px;
-        animation: slideUp 0.5s ease;
+        animation: slideUp 0.5s ease forwards;
     }
 
     .explore-title {
+        font-family: 'Cinzel', serif;
         color: #ffca28;
-        font-size: 2.2rem;
+        font-size: 2.8rem;
         font-weight: 800;
+        letter-spacing: 2px;
         text-align: center;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     .explore-subtitle {
-        color: #ffffff; 
+        color: rgba(255,255,255,0.7); 
         text-align: center;
         margin-bottom: 40px;
         font-size: 1rem;
     }
 
-    /* =========================================
-       5. LANGUAGE ORBS (CIRCLE IMAGES)
-       Circular profiles for each language
-       ========================================= */
     .language-orb {
-        width: 130px;
-        height: 130px;
+        width: 140px;
+        height: 140px;
         margin: 0 auto;
         border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        padding: 5px;
+        border: 2px solid rgba(255, 215, 0, 0.2);
+        padding: 8px;
         transition: 0.4s;
+        background: rgba(255,255,255,0.03);
         overflow: hidden;
-        background: #111;
     }
 
     .language-orb img {
@@ -143,34 +143,29 @@
         height: 100%;
         border-radius: 50%;
         object-fit: cover;
-        transition: 0.4s;
     }
 
-    /* GOLD GLOW ON HOVER */
     .language-link:hover .language-orb {
         border-color: #ffca28;
-        box-shadow: 0 0 25px rgba(255, 202, 40, 0.6); 
-        transform: scale(1.05);
+        transform: scale(1.1) rotate(3deg);
+        box-shadow: 0 0 30px rgba(255, 202, 40, 0.4);
     }
 
     .language-name-text {
-        color: #ffffff; 
+        color: #ddd;
         margin-top: 15px;
-        font-weight: 600;
+        font-weight: 700;
+        letter-spacing: 1px;
         text-transform: uppercase;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         text-align: center;
     }
 
-    /* =========================================
-       6. NAVIGATION BUTTONS
-       Standard back button styling
-       ========================================= */
     .btn-back {
         background: transparent;
         color: #ffca28;
         border: 1px solid #ffca28;
-        padding: 8px 20px;
+        padding: 10px 25px;
         border-radius: 50px;
         cursor: pointer;
         font-weight: 600;
@@ -183,35 +178,34 @@
     }
 
     /* =========================================
-       7. MOBILE RESPONSIVENESS
-       Adjustments for phones (6.67" and smaller)
-       ========================================= */
+       4. MOBILE RESPONSIVENESS (Merged)
+    ========================================= */
     @media (max-width: 768px) {
-        /* Stack Choice Cards Vertically */
-        .gateway-container {
-            grid-template-columns: 1fr; 
-            padding: 0 10px;
-        }
-
-        /* Center Home Button on Mobile */
-        .top-nav-row {
+        .explore-section { padding: 20px 15px 60px; }
+        
+        .top-nav-row { 
             justify-content: center !important; 
-            margin-bottom: 20px;
+            margin-bottom: 25px; 
         }
 
         .btn-home-link {
-            font-size: 1rem;
             padding: 12px 25px;
             background: rgba(20, 20, 20, 0.8);
+            border-radius: 50px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            opacity: 1; /* Make it fully visible on mobile */
+            opacity: 1;
         }
 
-        .explore-title {
-            font-size: 1.8rem;
+        .gateway-container { 
+            grid-template-columns: 1fr; 
+            gap: 20px;
+            padding: 0 10px;
         }
 
-        /* Smaller circles to fit screen better */
+        .gateway-card { padding: 40px 20px; }
+
+        .explore-title { font-size: 1.8rem; }
+
         .language-orb {
             width: 100px;
             height: 100px;
@@ -219,16 +213,11 @@
     }
 
     /* =========================================
-       8. ANIMATIONS
-       Smooth fading and sliding effects
-       ========================================= */
-    @keyframes fadeIn { 
-        from { opacity: 0; } 
-        to { opacity: 1; } 
-    }
-    
+       5. ANIMATIONS
+    ========================================= */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { 
-        from { opacity: 0; transform: translateY(20px); } 
+        from { opacity: 0; transform: translateY(30px); } 
         to { opacity: 1; transform: translateY(0); } 
     }
 </style>
@@ -240,48 +229,47 @@
         </a>
     </div>
     
-    <div class="gateway-container" id="gateway-screen">
-        <a href="{% url 'movies' %}" class="gateway-card">
-            <i class="fas fa-layer-group gateway-icon"></i>
-            <h3>All Movies</h3>
-            <p>See everything in our library</p>
-        </a>
+    <div class="view-wrapper">
+        <div class="gateway-container" id="gateway-screen">
+            <a href="{% url 'movies' %}" class="gateway-card">
+                <i class="fas fa-layer-group gateway-icon"></i>
+                <h3>All Movies</h3>
+                <p>Browse the full archive</p>
+            </a>
 
-        <div onclick="showLanguages()" class="gateway-card" style="cursor: pointer;">
-            <i class="fas fa-language gateway-icon"></i>
-            <h3>By Language</h3>
-            <p>Search movies by dialect</p>
-        </div>
-    </div>
-
-    <div id="language-view">
-        <div class="text-center mb-4">
-            <button onclick="showGateways()" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Go Back
-            </button>
-        </div>
-
-        <h1 class="explore-title">The Language Vault</h1>
-        <p class="explore-subtitle">Pick a language to start watching</p>
-
-        <div class="row justify-content-center g-4">
-            {% for language in languages %}
-            <div class="col-6 col-md-3 col-lg-2">
-                <a href="{% url 'movies_by_language' language.name %}" class="language-link text-decoration-none d-block">
-                    <div class="language-orb">
-                        {% if language.image %}
-                            <img src="{% static language.image %}" alt="{{ language.name }}">
-                        {% else %}
-                            <img src="{% static 'images/default_language.jpg' %}" alt="{{ language.name }}">
-                        {% endif %}
-                    </div>
-                    <div class="language-name-text">{{ language.name }}</div>
-                </a>
+            <div onclick="showLanguages()" class="gateway-card" style="cursor: pointer;">
+                <i class="fas fa-language gateway-icon"></i>
+                <h3>By Language</h3>
+                <p>Explore regional cinema</p>
             </div>
-            {% endfor %}
+        </div>
+
+        <div id="language-view">
+            <div class="text-center mb-5">
+                <h1 class="explore-title">The Language Vault</h1>
+                <p class="explore-subtitle">Pick a language to start watching</p>
+            </div>
+
+            <div class="row justify-content-center g-4 mb-5">
+                {% for language in languages %}
+                <div class="col-6 col-md-4 col-lg-2">
+                    <a href="{% url 'movies_by_language' language.name %}" class="language-link text-decoration-none d-block">
+                        <div class="language-orb">
+                            <img src="{% if language.image %}{% static language.image %}{% else %}{% static 'images/default_language.jpg' %}{% endif %}" alt="{{ language.name }}">
+                        </div>
+                        <div class="language-name-text">{{ language.name }}</div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center">
+                <button onclick="showGateways()" class="btn-back">
+                    <i class="fas fa-chevron-left me-2"></i> Back to Choice
+                </button>
+            </div>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -295,5 +283,4 @@
         document.getElementById('language-view').style.display = 'none';
     }
 </script>
-
 {% endblock %}
