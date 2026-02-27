@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath Moviezhub Moviezhub.wsgi:application
+web: gunicorn Moviezhub.Moviezhub.wsgi
