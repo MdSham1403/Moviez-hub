@@ -31,3 +31,4 @@ tqdm==4.66.5
 tzdata==2024.1
 urllib3==2.2.3
 whitenoise==6.11.0
+gunicorn
