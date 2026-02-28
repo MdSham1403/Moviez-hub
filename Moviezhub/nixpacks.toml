@@ -1,2 +1,11 @@
 [phases.setup]
 aptPkgs = ["...", "ffmpeg"]
+
+[phases.setup]
+nixPkgs = ["python311"]
+
+[phases.install]
+cmds = ["pip install -r Moviezhub/requirements.txt"]
+
+[start]
+cmd = "python Moviezhub/manage.py runserver 0.0.0.0:$PORT"
