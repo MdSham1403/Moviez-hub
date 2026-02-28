@@ -24,7 +24,7 @@ SECRET_KEY = config("SECRET_KEY", default="unsafe-dev-secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1","moviezhub14.up.railway.app"]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
@@ -32,6 +32,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://*.cloudinary.com",
+    "https://moviezhub14.up.railway.app"
 ]
 
 
