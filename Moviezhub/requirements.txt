@@ -35,3 +35,12 @@ cloudinary
 django-cloudinary-storage
 gunicorn
 dj-database-url
+python-dotenv
+psycopg[binary]
+django
+django-environ
+requests
+pillow
+moviepy
+psycopg2-binary  # Required for Railway's PostgreSQL database
+gunicorn         # Required to serve the app in production
