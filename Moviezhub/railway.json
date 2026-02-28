@@ -1,9 +1,9 @@
 {
   "build": {
-    "builder": "RAILPACK",
-    "buildCommand": "pip install -r requirements.txt"
+    "builder": "RAILPACK"
   },
   "deploy": {
-    "startCommand": "gunicorn Moviezhub.wsgi"
+    "startCommand": "gunicorn Moviezhub.wsgi",
+    "runtime": "python-3.11"
   }
 }

@@ -1,1 +1,1 @@
-web: gunicorn Moviezhub.Moviezhub.wsgi
+web: gunicorn Moviezhub.wsgi
