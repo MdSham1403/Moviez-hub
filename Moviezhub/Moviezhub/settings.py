@@ -240,3 +240,4 @@ cloudinary.config(
 )
 
 WHITENOISE_MANIFEST_STRICT = False
+DJANGO_SETTINGS_MODULE = "Moviezhub.settings"

@@ -3,7 +3,6 @@
     "builder": "RAILPACK"
   },
   "deploy": {
-    "startCommand": "gunicorn Moviezhub.wsgi",
-    "runtime": "python-3.11"
+    "startCommand": "gunicorn Moviezhub.wsgi:application --bind 0.0.0.0:8080"
   }
 }
