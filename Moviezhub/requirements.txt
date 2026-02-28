@@ -34,3 +34,4 @@ whitenoise==6.11.0
 cloudinary
 django-cloudinary-storage
 gunicorn
+dj-database-url
