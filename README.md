@@ -1,4 +1,4 @@
-🎬 MoviezHub
+###🎬 MoviezHub
 
 MoviezHub is a high-performance OTT streaming platform built with Django.
 It features a sleek, responsive UI, Google Social Authentication, and a robust backend deployed on Railway.
@@ -27,6 +27,8 @@ User profiles with customizable avatars and viewing preferences
 🚀 Production Ready
 Configured for PostgreSQL and served via Gunicorn on Railway
 
+---
+
 🛠️ Tech Stack
 
 | Layer      | Technology                          |
@@ -46,7 +48,10 @@ Google Cloud Account (for OAuth)
 
 Railway CLI (for production management)
 
+---
+
 ▶️ Steps to Run the Project Locally
+
 1️⃣ Clone the Repository
   ```bash
   git clone https://github.com/yourusername/moviezhub.git
