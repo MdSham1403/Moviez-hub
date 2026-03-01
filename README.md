@@ -55,4 +55,19 @@ Railway CLI (for production management)
   source .venv/bin/activate  # Windows: .venv\Scripts\activate
   pip install -r requirements.txt
 ```
+2️⃣ Apply Database Migrations
 
+  ```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+3️⃣ Google OAuth Setup
+1. Create credentials in Google Cloud Console
+2. Add this to Authorized Redirect URIs:
+```bash
+http://127.0.0.1:8000/accounts/google/login/callback/
+```
+3. Add Client ID and Client Secret to your .env or Django Admin panel
+
+4️⃣ Run the Development Server
+echo python manage.py runserver
