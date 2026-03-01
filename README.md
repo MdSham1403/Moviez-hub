@@ -1,119 +1,108 @@
-# MoviezHub Project
+🎬 MoviezHub
+MoviezHub is a high-performance OTT streaming platform built with Django. It features a sleek, responsive UI, Google Social Authentication, and a robust backend deployed on Railway. Designed for personal use, it offers a seamless experience for managing and streaming movies and series.
 
-## Overview
-**MoviezHub** is a private OTT (Over-The-Top) streaming platform designed for personal use. It allows users to watch movies and series with enhanced features like personalized profiles, streaming, and content management. This platform provides a secure and optimized experience for managing movie collections, user profiles, and viewing preferences.
+🚀 Live Demo: moviezhub14.up.railway.app
 
-## Features
-1. **User Authentication:**
-   - User registration, login, and password recovery.
-   - Secure password management and user authentication.
-   
-2. **Profile Management:**
-   - Users can create and update their profiles, including adding a profile picture.
-   - Profile information includes name, email, bio, and location.
-   - Users can change or delete their profile picture.
+✨ Key Features
+Social Authentication: Secure login via Google OAuth using django-allauth.
 
-3. **Movie and Series Management:**
-   - Admin can upload and manage movies and series.
-   - Movies can be searched and filtered by name and genre.
-   - Movies and series are displayed with posters, titles, and descriptions.
-   - Series display seasons and episodes with thumbnails.
+Dynamic Streaming: Integrated YouTube/Video player with mobile-responsive configurations.
 
-4. **Video Streaming:**
-   - Video player supports full-screen mode and playback options (forward, rewind, volume control).
-   - Movies and series are streamed in 1080p resolution with subtitles.
+Content Management: Advanced Django Admin suite for managing Movies, Series, Seasons, and Episodes.
 
-5. **Basic Search and Filtering:**
-   - Search movies and series by name and genre.
-   - Movies are grouped by language and genre.
+Smart Search: Filter and search content by title, genre, and language.
 
-6. **Security Features:**
-   - Secured email configurations for notifications and user authentication.
-   - All user and movie data are securely stored.
+Personalization: User profiles with customizable avatars and viewing preferences.
 
-7. **Admin Panel (Django):**
-   - Admin panel for managing movies, series, users, and settings.
-   - Easy control over movie and profile data.
+Production Ready: Configured for PostgreSQL and served via Gunicorn on Railway.
 
-## Installation
+🛠️ Tech Stack
+Backend: Django 5.1 (Python 3.11)
 
-### Prerequisites
-- Python 3.9+
-- Django 4.x
-- PostgreSQL (or any database of choice)
+Database: PostgreSQL (Hosted on Railway)
+
+Auth: Google OAuth 2.0 / Django Allauth
+
+Deployment: Railway (with CI/CD)
+
+Frontend: Bootstrap 5, Custom CSS, JavaScript
+
+🚀 Installation & Local Setup
+Prerequisites
+Python 3.11+
+
+Google Cloud Console Account (for OAuth)
+
+Railway CLI (for production management)
 
 ### Steps to Run the Project Locally
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/moviezhub.git
+   git clone [https://github.com/yourusername/moviezhub.git](https://github.com/yourusername/moviezhub.git)
    cd moviezhub
-   
-2. Set up a virtual environment:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # For Linux/Mac
-   venv\Scripts\activate     # For Windows
-
-4. Install dependencies:
-   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # Windows: .venv\Scripts\activate
    pip install -r requirements.txt
    
-5. Set up the database:
-   Modify settings.py to configure the database (PostgreSQL or SQLite).
-   Run migrations:
+2. Database Migrations
    ```bash
+   python manage.py makemigrations
    python manage.py migrate
 
-6. Create a superuser for admin access:
+3. Google OAuth Setup
+   Create credentials at Google Cloud Console.
+   Add http://127.0.0.1:8000/accounts/google/login/callback/ to Authorized Redirect URIs.
+   Add Client ID and Secret to your .env or Django Admin.
+   
+4. Run Locally
    ```bash
-   python manage.py createsuperuser
+   python manage.py runserver
 
- 7. Start the development server:
-    ```bash
-      python manage.py runserver
-    
-8. Open the browser and navigate to http://127.0.0.1:8000 to see the website.
+☁️ Deployment (Railway)
+This project is optimized for Railway.
 
+Environment Variables
+Ensure these are set in your Railway dashboard:
 
-Usage
+DATABASE_URL: Your Postgres connection string.
 
-User Registration and Login:
+SITE_ID: The ID of your production domain (usually 1 or 2).
 
-Navigate to the registration page to create a new account.
-After logging in, users can update their profiles and browse movies.
+DEBUG: False in production.
 
-Admin Panel:
+ALLOWED_HOSTS: moviezhub14.up.railway.app
 
-Admin users can log in to the admin panel at http://127.0.0.1:8000/admin to manage content.
-Movie Streaming:
+###Railway CLI Management Commands
 
-Users can view movies, add them to their profiles, and stream content.
-Profile Settings:
+   ```bash
+   # Apply migrations to production
+   railway run python manage.py migrate
 
-Users can edit their profile details and upload a new profile picture.
-Technologies Used
-Frontend: HTML, CSS, JavaScript (for interactive UI)
-Backend: Django (Python)
-Database: PostgreSQL
-File Storage: (Local or Cloud-based, e.g., AWS S3 for production)
-Authentication: Django authentication system with email-based verification
-Video Streaming: Supports 1080p video resolution and subtitle integration
-Contributing
-Feel free to fork the repository and submit pull requests to improve the project. Contributions can be in any of the following areas:
+   # Create a production admin
+   railway run python manage.py createsuperuser
 
-Fixing bugs
-Adding new features (e.g., advanced search, more user options)
-Improving UI/UX design
-Enhancing security features
-To contribute:
+   # Check production Site IDs
+   railway run python manage.py shell
+   
+   ```
+🤝 Contributing
+Fork the Project.
+Create your Feature Branch:
+   ```bash
+   git checkout -b feature/NewFeature
+   ```
+Commit your Changes:
+   ```bash
+   git commit -m 'Add some NewFeature'
+   ```
+Push to the Branch:
+   ```bash
+   git push origin feature/NewFeature
+   ```
+Open a Pull Request.
 
-Fork the repository.
-Create a new branch.
-Make your changes.
-Push the changes and create a pull request.
-License
-This project is open-source and available under the MIT License.
+📄 License
+Distributed under the MIT License.
 
-Author
-Developed by Sam!
+Author: Developed by Sam!
