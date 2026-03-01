@@ -26,3 +26,30 @@ User profiles with customizable avatars and viewing preferences
 
 🚀 Production Ready
 Configured for PostgreSQL and served via Gunicorn on Railway
+
+🛠️ Tech Stack
+
+| Layer      | Technology                          |
+| ---------- | ----------------------------------- |
+| Backend    | Django 5.1 (Python 3.11)            |
+| Database   | PostgreSQL                          |
+| Auth       | Google OAuth 2.0 / Django Allauth   |
+| Deployment | Railway (CI/CD Enabled)             |
+| Frontend   | Bootstrap 5, Custom CSS, JavaScript |
+
+🚀 Installation & Local Setup
+📦 Prerequisites
+
+Python 3.11+
+
+Google Cloud Account (for OAuth)
+
+Railway CLI (for production management)
+
+▶️ Steps to Run the Project Locally
+1️⃣ Clone the Repository
+git clone https://github.com/yourusername/moviezhub.git
+cd moviezhub
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
