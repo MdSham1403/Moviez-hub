@@ -393,7 +393,7 @@
 
             <label class="field-wrapper" style="color:#ffd700; font-size: 0.65rem; margin-bottom: 10px;">Visual Avatar</label>
             <div class="image-edit-section">
-                <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}" 
+                <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static "https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771509734/default-profile.jpg" %}{% endif %}" 
      alt="Profile" 
      class="preview-img" 
      id="avatar-preview"

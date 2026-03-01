@@ -175,11 +175,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
+USE_TZ = True
 
 USE_I18N = True
-
-USE_TZ = True
 
 CSP_DEFAULT_SRC = ("'self'", "https://cdn.jsdelivr.net")
 CSP_SCRIPT_SRC = ("'self'", "https://cdn.jsdelivr.net")
