@@ -48,8 +48,11 @@ Railway CLI (for production management)
 
 ▶️ Steps to Run the Project Locally
 1️⃣ Clone the Repository
-git clone https://github.com/yourusername/moviezhub.git
-cd moviezhub
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+  ```bash
+  git clone https://github.com/yourusername/moviezhub.git
+  cd moviezhub
+  python -m venv .venv
+  source .venv/bin/activate  # Windows: .venv\Scripts\activate
+  pip install -r requirements.txt
+```
+
