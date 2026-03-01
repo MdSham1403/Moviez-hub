@@ -70,4 +70,58 @@ http://127.0.0.1:8000/accounts/google/login/callback/
 3. Add Client ID and Client Secret to your .env or Django Admin panel
 
 4️⃣ Run the Development Server
-echo python manage.py runserver
+```bash
+python manage.py runserver
+```
+☁️ Deployment (Railway)
+
+This project is optimized for deployment on Railway
+
+🔐 Environment Variables
+
+Set these inside your Railway dashboard:
+```bash
+DATABASE_URL=your_postgres_connection_string
+SITE_ID=1
+DEBUG=False
+ALLOWED_HOSTS=moviezhub14.up.railway.app
+```
+🧰 Railway CLI Management Commands
+```bash
+# Apply migrations to production
+railway run python manage.py migrate
+
+# Create a production admin user
+railway run python manage.py createsuperuser
+
+# Check Site IDs in production
+railway run python manage.py shell
+```
+🤝 Contributing
+
+Fork the project
+
+Create your feature branch:
+```bash
+git checkout -b feature/NewFeature
+```
+Commit your changes:
+```bash
+git commit -m "Add some NewFeature"
+```
+Push to the branch:
+```bash
+git push origin feature/NewFeature
+```
+Open a Pull Request 🚀
+
+---
+
+📄 License
+
+Distributed under the MIT License
+
+---
+👨‍💻 Author
+
+Developed with ❤️ by Sam
