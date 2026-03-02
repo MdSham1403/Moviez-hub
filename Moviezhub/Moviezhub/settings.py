@@ -62,17 +62,17 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+# STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 # Modern Django 4.2+ way to connect Cloudinary
+# Media (uploads like posters)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.StaticFilesStorage",
+    "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
 # Force HTTPS in the redirect URI
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
