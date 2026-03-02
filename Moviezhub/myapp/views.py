@@ -111,13 +111,9 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-
             # 🔥 Trigger Allauth verification email
-            send_email_confirmation(request, user)
 
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            send_welcome_email(user)
-
             return redirect('home')
     else:
         form = CustomUserCreationForm()
@@ -685,11 +681,11 @@ def test_email(request):
     send_mail(
         subject="MoviezHub Test Email",
         message="Hello! This is a test email from MoviezHub 🎬",
-        from_email="Moviez Hub <craftedvisualsstudio@gmail.com>",
-        recipient_list=["mdsham1403@gmail.com"],  # replace with your email
+        from_email=settings.DEFAULT_FROM_EMAIL, # Use the onboarding@resend.dev from settings
+        recipient_list=["mdsham1403@gmail.com"],
         fail_silently=False,
     )
-    return HttpResponse("✅ Test email sent successfully!")
+    return HttpResponse("✅ Test email sent successfully! Check your inbox (and spam).")
 
 
 @login_required
@@ -720,16 +716,24 @@ def send_welcome_email(user):
         print("❌ No email found for user:", user.username)
         return
 
-    subject = "Welcome to MoviezHub 🎬"
-    from_email = settings.DEFAULT_FROM_EMAIL
-    to_email = user.email
+    try:
+        subject = "Welcome to MoviezHub 🎬"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = user.email
 
-    text_content = f"Hi {user.username}, thanks for joining MoviezHub!"
-    html_content = render_to_string("emails/welcome_email.html", {"user": user})
+        text_content = f"Hi {user.username}, thanks for joining MoviezHub!"
+        html_content = render_to_string("emails/welcome_email.html", {"user": user})
 
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+        msg.attach_alternative(html_content, "text/html")
+        
+        # Add fail_silently=True here
+        msg.send(fail_silently=True)
+        print(f"✅ Welcome email process finished for {to_email}")
+        
+    except Exception as e:
+        # This logs to Railway console, but doesn't crash the app
+        print(f"❌ Resend API Error: {str(e)}")
     
 User = get_user_model()
 

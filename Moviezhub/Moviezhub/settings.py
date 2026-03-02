@@ -12,7 +12,7 @@ from decouple import config
 import os
 import cloudinary_storage
 import dj_database_url
-
+import cloudinary
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",  # Only list this ONCE
     "cloudinary",  # This can be here
     "django.contrib.sites",
+    "anymail",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -176,6 +177,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+cloudinary.config(
+    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
+    api_key=config(
+        "API_KEY_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_KEY")
+    ),
+    api_secret=config(
+        "API_SECRET_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_SECRET")
+    ),
+    secure=True,
+)
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -229,29 +242,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"  # Required for modern embeds
 
 # Add this to your settings.py for email configuration
-# REMOVE OR COMMENT OUT YOUR OLD SMTP SETTINGS (EMAIL_HOST, EMAIL_PORT, etc.)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = f"Moviez Hub <{EMAIL_HOST_USER}>"
+#DEFAULT_FROM_EMAIL = f"Moviez Hub <{EMAIL_HOST_USER}>"
+DEFAULT_FROM_EMAIL = "MoviezHub <onboarding@resend.dev>"
 ADMIN_EMAIL = "craftedvisualsstudio@gmail.com"
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
 
-# settings.py (At the very bottom)
-import cloudinary
-
-cloudinary.config(
-    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
-    api_key=config(
-        "API_KEY_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_KEY")
-    ),
-    api_secret=config(
-        "API_SECRET_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_SECRET")
-    ),
-    secure=True,
-)
+ANYMAIL = {
+    "RESEND_API_KEY": "re_XxCYihCc_QJ9hoy6iDXt5gXV3jwg7Ay9p", # Get this from resend.com
+}
 
 WHITENOISE_MANIFEST_STRICT = False
