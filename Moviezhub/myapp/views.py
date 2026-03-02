@@ -104,20 +104,24 @@ def my_watchlist(request):
 # ======================
 
 # register view (fixed)
+from allauth.account.utils import send_email_confirmation
+
 def register(request):
-    """User Registration"""
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
-            # ✅ Correct way: just pass the user
+            # 🔥 Trigger Allauth verification email
+            send_email_confirmation(request, user)
+
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             send_welcome_email(user)
 
             return redirect('home')
     else:
         form = CustomUserCreationForm()
+
     return render(request, 'register.html', {'form': form})
 
 
@@ -712,20 +716,20 @@ def send_updates(request):
     return HttpResponse("✅ Update emails sent successfully!")
 
 def send_welcome_email(user):
+    if not user.email:
+        print("❌ No email found for user:", user.username)
+        return
+
     subject = "Welcome to MoviezHub 🎬"
     from_email = settings.DEFAULT_FROM_EMAIL
     to_email = user.email
 
-    # plain text version (fallback)
     text_content = f"Hi {user.username}, thanks for joining MoviezHub!"
-
-    # HTML version (optional, create emails/welcome_email.html template)
     html_content = render_to_string("emails/welcome_email.html", {"user": user})
 
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
-
     
 User = get_user_model()
 

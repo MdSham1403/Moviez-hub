@@ -12,6 +12,15 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+# myapp/signals.py
+
+from allauth.account.signals import user_signed_up
+from django.dispatch import receiver
+from .views import send_welcome_email
+
+@receiver(user_signed_up)
+def send_welcome_on_signup(request, user, **kwargs):
+    send_welcome_email(user)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
