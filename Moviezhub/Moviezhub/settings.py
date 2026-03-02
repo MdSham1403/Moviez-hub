@@ -229,7 +229,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"  # Required for modern embeds
 
 # Add this to your settings.py for email configuration
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# REMOVE OR COMMENT OUT YOUR OLD SMTP SETTINGS (EMAIL_HOST, EMAIL_PORT, etc.)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
