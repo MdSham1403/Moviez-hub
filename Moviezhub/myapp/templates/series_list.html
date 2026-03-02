@@ -248,7 +248,7 @@
                             {% if s.poster %}
                                 <img src="{{ s.poster.url }}" alt="{{ s.title }}" class="vault-poster">
                             {% else %}
-                                <img src="{% static 'images/default_poster.jpg' %}" alt="No Poster" class="vault-poster">
+                                <img src="{% static 'images/default_poster.jpg' %}" alt="N/A" class="movie-poster-detail" onerror="this.onerror=null;this.src='https://placehold.jp/40/1a1a1a/ffd700/600x900.png?text=VAULT%20PREMIUM';">
                             {% endif %}
                         </div>
                         

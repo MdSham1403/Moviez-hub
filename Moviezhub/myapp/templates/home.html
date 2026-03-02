@@ -223,7 +223,7 @@
         {% if user.profile.profile_picture %}
             <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="user-avatar shadow">
         {% else %}
-            <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771509734/default-profile.jpg" 
+            <img src="{% static 'images/logo.png' %}" 
             alt="Profile" 
             class="user-avatar shadow">
         {% endif %}
