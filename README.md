@@ -1,4 +1,4 @@
-###🎬 MoviezHub
+🎬 ###MoviezHub
 
 MoviezHub is a high-performance OTT streaming platform built with Django.
 It features a sleek, responsive UI, Google Social Authentication, and a robust backend deployed on Railway.
