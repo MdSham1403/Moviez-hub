@@ -60,8 +60,6 @@ CLOUDINARY_STORAGE = {
     "PREFIX": "",  # This prevents Django from adding an extra 'media/' folder if it's already in your path
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 # Modern Django 4.2+ way to connect Cloudinary
 # Media (uploads like posters)
 STORAGES = {
@@ -69,8 +67,8 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage",    
-        },
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",
+    },
 }
 # Force HTTPS in the redirect URI
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
@@ -177,17 +175,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-cloudinary.config(
-    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
-    api_key=config(
-        "API_KEY_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_KEY")
-    ),
-    api_secret=config(
-        "API_SECRET_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_SECRET")
-    ),
-    secure=True,
-)
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -252,5 +239,18 @@ DEFAULT_FROM_EMAIL = f"Moviez Hub <{EMAIL_HOST_USER}>"
 ADMIN_EMAIL = "craftedvisualsstudio@gmail.com"
 
 #ANYMAIL = { "RESEND_API_KEY": "re_XxCYihCc_QJ9hoy6iDXt5gXV3jwg7Ay9p", # Get this from resend.com}
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
+    api_key=config(
+        "API_KEY_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_KEY")
+    ),
+    api_secret=config(
+        "API_SECRET_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_SECRET")
+    ),
+    secure=True,
+)
 
 WHITENOISE_MANIFEST_STRICT = False

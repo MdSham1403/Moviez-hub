@@ -199,7 +199,9 @@
         {% if user.profile.profile_picture %}
             <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
         {% else %}
-        <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771509734/default-profile.jpg" alt="Profile" class="user-avatar shadow">
+            <img src="{% static 'default_profile_pics/default-profile.png' %}" 
+                alt="Profile" 
+                class="user-avatar shadow">
         {% endif %}
         <span class="member-badge">VIP Member</span>
     </div>
