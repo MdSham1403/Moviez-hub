@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",  # Only list this ONCE
     "cloudinary",  # This can be here
     "django.contrib.sites",
-    "anymail",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -62,7 +61,7 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-# STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 # Modern Django 4.2+ way to connect Cloudinary
 # Media (uploads like posters)
 STORAGES = {
@@ -70,8 +69,8 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-    "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
+        "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage",    
+        },
 }
 # Force HTTPS in the redirect URI
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
@@ -243,16 +242,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"  # Required for modern embeds
 
 # Add this to your settings.py for email configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.sendgrid.net"
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-#DEFAULT_FROM_EMAIL = f"Moviez Hub <{EMAIL_HOST_USER}>"
-DEFAULT_FROM_EMAIL = "MoviezHub <onboarding@resend.dev>"
+EMAIL_HOST_USER = "apikey"  # Must be exactly 'apikey'
+EMAIL_HOST_PASSWORD = config("SENDGRID_API_KEY")
+DEFAULT_FROM_EMAIL = f"Moviez Hub <{EMAIL_HOST_USER}>"
 ADMIN_EMAIL = "craftedvisualsstudio@gmail.com"
-EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
 
-ANYMAIL = {
-    "RESEND_API_KEY": "re_XxCYihCc_QJ9hoy6iDXt5gXV3jwg7Ay9p", # Get this from resend.com
-}
+#ANYMAIL = { "RESEND_API_KEY": "re_XxCYihCc_QJ9hoy6iDXt5gXV3jwg7Ay9p", # Get this from resend.com}
 
 WHITENOISE_MANIFEST_STRICT = False
