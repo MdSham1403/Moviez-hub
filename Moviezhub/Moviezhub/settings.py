@@ -13,6 +13,7 @@ import os
 import cloudinary_storage
 import dj_database_url
 import cloudinary
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY", default="unsafe-dev-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1","moviezhub14.up.railway.app"]
 
@@ -62,14 +63,7 @@ CLOUDINARY_STORAGE = {
 
 # Modern Django 4.2+ way to connect Cloudinary
 # Media (uploads like posters)
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.StaticFilesStorage",
-    },
-}
+
 # Force HTTPS in the redirect URI
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -192,13 +186,15 @@ CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+STATICFILES_STORAGE = "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
+
+STATIC_URL = "/static/"
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_URL = "/media/"
 # settings.py
-
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 CSP_FRAME_SRC = (
     "'self'",
@@ -240,17 +236,10 @@ ADMIN_EMAIL = "craftedvisualsstudio@gmail.com"
 
 #ANYMAIL = { "RESEND_API_KEY": "re_XxCYihCc_QJ9hoy6iDXt5gXV3jwg7Ay9p", # Get this from resend.com}
 
-import cloudinary
-
 cloudinary.config(
-    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
-    api_key=config(
-        "API_KEY_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_KEY")
-    ),
-    api_secret=config(
-        "API_SECRET_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_SECRET")
-    ),
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
     secure=True,
 )
-
 WHITENOISE_MANIFEST_STRICT = False
