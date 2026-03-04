@@ -200,7 +200,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.StaticFilesStorage",    
         },
 }
-
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
 # settings.py
 
 CSP_FRAME_SRC = (
