@@ -12,6 +12,7 @@ from decouple import config
 import os
 import cloudinary_storage
 import dj_database_url
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,17 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY", default="unsafe-dev-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1","moviezhub14.up.railway.app"]
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://moviezhub14.up.railway.app",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://*.cloudinary.com",
-    "https://moviezhub14.up.railway.app"
 ]
 
 
@@ -60,23 +61,19 @@ CLOUDINARY_STORAGE = {
     "PREFIX": "",  # This prevents Django from adding an extra 'media/' folder if it's already in your path
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # Modern Django 4.2+ way to connect Cloudinary
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.StaticFilesStorage",
-    },
-}
+# Media (uploads like posters)
+
+# Force HTTPS in the redirect URI
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SITE_ID = 2
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # Keep it here (at the top)
+    "whitenoise.middleware.WhiteNoiseMiddleware", 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -151,6 +148,8 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_ADAPTER = "allauth.account.adapter.DefaultAccountAdapter"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -170,16 +169,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
+USE_TZ = True
 
 USE_I18N = True
-
-USE_TZ = True
 
 CSP_DEFAULT_SRC = ("'self'", "https://cdn.jsdelivr.net")
 CSP_SCRIPT_SRC = ("'self'", "https://cdn.jsdelivr.net")
@@ -187,13 +186,21 @@ CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = "/static/"
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_URL = "/media/"
-# settings.py
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",    
+        },
+}
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+# settings.py
 
 CSP_FRAME_SRC = (
     "'self'",
@@ -225,26 +232,26 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"  # Required for moder
 
 # Add this to your settings.py for email configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "smtp.sendgrid.net"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = "apikey"  # Must be exactly 'apikey'
+EMAIL_HOST_PASSWORD = config("SENDGRID_API_KEY")
 DEFAULT_FROM_EMAIL = f"Moviez Hub <{EMAIL_HOST_USER}>"
 ADMIN_EMAIL = "craftedvisualsstudio@gmail.com"
 
-# settings.py (At the very bottom)
-import cloudinary
+#ANYMAIL = { "RESEND_API_KEY": "re_XxCYihCc_QJ9hoy6iDXt5gXV3jwg7Ay9p", # Get this from resend.com}
 
 cloudinary.config(
-    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
-    api_key=config(
-        "API_KEY_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_KEY")
-    ),
-    api_secret=config(
-        "API_SECRET_HERE_IF_DIFFERENT_IN_ENV", default=config("CLOUDINARY_API_SECRET")
-    ),
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
     secure=True,
 )
+#WHITENOISE_MANIFEST_STRICT = False
 
-WHITENOISE_MANIFEST_STRICT = False
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
