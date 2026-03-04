@@ -197,8 +197,8 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage", # Let WhiteNoise handle CSS/Admin
-    },
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",    
+        },
 }
 
 # settings.py
@@ -250,3 +250,9 @@ cloudinary.config(
     secure=True,
 )
 #WHITENOISE_MANIFEST_STRICT = False
+
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
