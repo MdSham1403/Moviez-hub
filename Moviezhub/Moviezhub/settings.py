@@ -73,7 +73,7 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    #"whitenoise.middleware.WhiteNoiseMiddleware", 
+    "whitenoise.middleware.WhiteNoiseMiddleware", 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -194,12 +194,11 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",    
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",    
         },
 }
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-#STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+WHITENOISE_MANIFEST_STRICT = False
 # settings.py
 
 CSP_FRAME_SRC = (
@@ -251,3 +250,8 @@ cloudinary.config(
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+WHITENOISE_INDEX_FILE = True
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
