@@ -45,4 +45,4 @@ psycopg2-binary  # Required for Railway's PostgreSQL database
 gunicorn         # Required to serve the app in production
 #django-anymail[resend]
 requests
-whitenoise==6.11.0
+whitenoise
