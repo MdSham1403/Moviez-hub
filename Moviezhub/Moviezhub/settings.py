@@ -118,15 +118,19 @@ WSGI_APPLICATION = "Moviezhub.wsgi.application"
 
 from decouple import config
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-if DATABASE_URL:
+ON_RAILWAY = 'RAILWAY_ENVIRONMENT' in os.environ
+
+if ON_RAILWAY:
+    # --- PRODUCTION (Railway) ---
+    # This uses the internal DATABASE_URL Railway provides
     DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
+        "default": dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
             conn_max_age=600,
             ssl_require=True,
         )
     }
+    DEBUG = False
 else:
     DATABASES = {
         "default": {
@@ -138,6 +142,8 @@ else:
             "PORT": config("DB_PORT"),
         }
     }
+    DEBUG = True
+
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -188,18 +194,26 @@ CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net")
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 MEDIA_URL = "/media/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_DIRS = [
+    BASE_DIR  / "static",
+]
+
 
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.StaticFilesStorage",    
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",    
         },
 }
-STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
-WHITENOISE_MANIFEST_STRICT = False
-# settings.py
+
+#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CSP_FRAME_SRC = (
     "'self'",
@@ -225,7 +239,6 @@ handler500 = "myapp.views.custom_500"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-# settings.py
 # SECURE_REFERRER_POLICY = "no-referrer-when-downgrade"
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"  # Required for modern embeds
 
@@ -248,10 +261,4 @@ cloudinary.config(
     secure=True,
 )
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-WHITENOISE_INDEX_FILE = True
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+WHITENOISE_MANIFEST_STRICT = False
