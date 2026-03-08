@@ -195,11 +195,11 @@ CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net")
 
 MEDIA_URL = "/media/"
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "static"
 
-STATICFILES_DIRS = [
-    BASE_DIR  / "static",
-]
+#STATICFILES_DIRS = [
+#    BASE_DIR  / "static",
+#]
 
 
 STORAGES = {
@@ -207,11 +207,11 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",    
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",    
         },
 }
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CSP_FRAME_SRC = (
