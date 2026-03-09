@@ -3,6 +3,6 @@
     "builder": "RAILPACK"
   },
   "deploy": {
-    "startCommand": "gunicorn Moviezhub.wsgi:application --bind 0.0.0.0:8080"
+    "startCommand": "sleep 5 && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn Moviezhub.wsgi:application --bind 0.0.0.0:$PORT"
   }
 }

@@ -222,16 +222,14 @@
     <section class="hero-section">
         {% if user.profile.profile_picture %}
             <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="user-avatar shadow">
-
-        {% elif some_condition %} 
+        
+        {% elif not user.profile.profile_picture %} 
             <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771304430/logo.png" 
                 alt="Profile" 
                 class="user-avatar shadow">
 
         {% else %}
-            <img src="{% static 'images/logo.png' %}" 
-                alt="Profile" 
-                class="user-avatar shadow">
+            <img src="{% static 'images/logo.png' %}" alt="Profile" class="user-avatar shadow">
         {% endif %}
 
         <h2 class="greeting-text">Hey, <span class="username-highlight">{{ user.first_name|default:user.username }}</span>!</h2>

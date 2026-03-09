@@ -194,24 +194,21 @@ CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net")
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 MEDIA_URL = "/media/"
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles/"
 
-#STATICFILES_DIRS = [
-#    BASE_DIR  / "static",
-#]
-
+STATICFILES_DIRS = [BASE_DIR / 'static'] # Django looks here for your logo
 
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.StaticFilesStorage",    
+        "BACKEND": "cloudinary_storage.storage.StaticCloudinaryStorage",    
         },
 }
 
-STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+STATICFILES_STORAGE = "cloudinary_storage.storage.StaticCloudinaryStorage"
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CSP_FRAME_SRC = (
