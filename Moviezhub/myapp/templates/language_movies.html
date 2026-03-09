@@ -260,12 +260,16 @@
             <div class="movie-card">
                 <a href="{% url 'movie_detail' movie.id %}" class="movie-link text-center d-block">
                      <div class="movie-card">
-                        {% if movie.poster %}
+                       {% if movie.poster %}
                             <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+
                         {% elif movie.poster_url %}
                             <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster-detail">
+
                         {% else %}
-                            <img src="https://res.cloudinary.com/dx6cvs9dk/static/Images/upload/profile_pics/default_poster.jpg" alt="N/A" class="movie-poster-detail">
+                            <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1773065657/static/images/default_poster.jpg" 
+                                alt="Default Poster" 
+                                class="movie-poster-detail">
                         {% endif %}
                     </div>
                     <h5 class="movie-title">{{ movie.title }}</h5>
