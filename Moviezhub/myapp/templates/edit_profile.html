@@ -390,33 +390,53 @@
                 <label>User Name</label>
                 <input type="text" name="username" value="{{ user_form.instance.username }}">
             </div>
+            <label class="field-wrapper" style="color:#ffd700; font-size: 0.65rem; margin-bottom: 10px;">
+                Visual Avatar
+            </label>
 
-            <label class="field-wrapper" style="color:#ffd700; font-size: 0.65rem; margin-bottom: 10px;">Visual Avatar</label>
             <div class="image-edit-section">
-                 {% if user.profile.profile_picture %}
-                    <img src="{{ user.profile.profile_picture.url }}" 
-                        alt="Profile" 
-                        class="user-avatar shadow"
-                        onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=1a1a1a&color=ffd700&size=128';">
+
+                {% if user.profile.profile_picture %}
+                    <img 
+                        src="{{ user.profile.profile_picture.url }}" 
+                        alt="Profile"
+                        id="avatar-preview"
+                        class="preview-img shadow">
                 {% else %}
-                    <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771509734/default-profile.jpg" 
-                        alt="Profile" 
-                        class="user-avatar shadow"
-                        onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=1a1a1a&color=ffd700&size=128';">
+                    <img 
+                        src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771509734/default-profile.jpg"
+                        alt="Profile"
+                        id="avatar-preview"
+                        class="preview-img shadow">
                 {% endif %}
+
                 <div class="file-input-wrapper">
-                    <input type="file" id="avatar-input" accept="image/*" class="file-input-custom mb-1">
-                    <input type="hidden" name="cropped_image" id="cropped-image-data">
+
+                    <input 
+                        type="file"
+                        id="avatar-input"
+                        accept="image/*"
+                        class="file-input-custom mb-1">
+
+                    <input 
+                        type="hidden"
+                        name="cropped_image"
+                        id="cropped-image-data">
 
                     {% if user.profile.profile_picture %}
-                    <div style="font-size: 0.65rem; color: rgba(255, 77, 77, 0.7); margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                        <input type="checkbox" name="delete_profile_picture" id="delete_profile_picture"> 
-                        <label for="delete_profile_picture" style="margin:0; color:inherit; text-transform:none; letter-spacing: 0;">Remove Image</label>
+                    <div style="font-size:0.65rem;color:rgba(255,77,77,0.7);margin-top:5px;display:flex;align-items:center;gap:5px;">
+                        <input type="checkbox" name="delete_profile_picture" id="delete_profile_picture">
+
+                        <label for="delete_profile_picture"
+                            style="margin:0;color:inherit;text-transform:none;letter-spacing:0;">
+                            Remove Image
+                        </label>
                     </div>
                     {% endif %}
-                </div>
-            </div>
 
+                </div>
+
+            </div>
             <button type="submit" class="btn-gold">Update Identity</button>
 
             <div class="action-row">
