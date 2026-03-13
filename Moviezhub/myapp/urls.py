@@ -82,6 +82,7 @@ urlpatterns = [
     # ==========================================
     # This triggers your Plyr player
     path('movies/<int:movie_id>/watch/', views.watch_movie, name='watch_movie'),
+    path("api/next-episode/<int:movie_id>/", views.next_episode),
     
     # This saves the 5-second interval progress via AJAX
     path('stream/update/<uuid:stream_id>/', views.update_stream_progress, name='get_stream'),

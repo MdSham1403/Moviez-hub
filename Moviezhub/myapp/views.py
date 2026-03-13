@@ -23,6 +23,8 @@ from .models import MovieRequest
 from dotenv import load_dotenv
 import base64
 from django.core.files.base import ContentFile
+#from utils.bunny_token import generate_signed_url
+from myapp.utils.bunny_token import generate_signed_url
 
 from .forms import (
     MovieUploadForm,
@@ -47,6 +49,21 @@ from .models import (
     Stream,
 )
 from django.contrib.auth.models import User
+import hashlib
+import base64
+import time
+
+BUNNY_SECRET = "edac228c-65e9-41cf-b8a4-cc9a95f7ef98"
+
+
+def generate_signed_url(path):
+
+    expires = int(time.time()) + 3600
+
+    token_data = f"{BUNNY_SECRET}{path}{expires}"
+    token = hashlib.md5(token_data.encode()).hexdigest()
+
+    return f"{path}?token={token}&expires={expires}"
 
 
 def welcome(request):
@@ -590,17 +607,29 @@ def updates(request):
 
 @login_required
 def watch_movie(request, movie_id):
+
     movie = get_object_or_404(Movie, id=movie_id)
 
     streams = Stream.objects.filter(
         movie=movie,
         is_active=True
-    ).order_by('-quality')
+    ).order_by("-quality")
 
-    selected_quality = request.GET.get('quality')
-    stream = streams.filter(quality=selected_quality).first() if selected_quality else streams.first()
 
+    # 🎬 QUALITY SELECTION
+    selected_quality = request.GET.get("quality")
+    stream = None
+
+    if selected_quality:
+        stream = streams.filter(quality=selected_quality).first()
+
+    if not stream:
+        stream = streams.first()
+
+
+    # ⏱ WATCH HISTORY
     last_position = 0
+
     if stream:
         history, _ = WatchHistory.objects.get_or_create(
             user=request.user,
@@ -608,32 +637,141 @@ def watch_movie(request, movie_id):
         )
         last_position = history.last_position
 
+
     youtube_id = None
     video_source_url = None
 
+
+    # 🎥 STREAM SOURCE
     if stream:
+
+        # Uploaded file
         if stream.video_file:
             video_source_url = stream.video_file.url
+
+        # Bunny / external streaming
         elif stream.video_url:
-            if "youtube" in stream.video_url:
+
+            # YouTube
+            if "youtube" in stream.video_url or "youtu.be" in stream.video_url:
                 youtube_id = extract_youtube_id(stream.video_url)
+
             else:
-                video_source_url = stream.video_url
-    else:
-        # fallback for old movies
+                # Generate Bunny signed URL
+                video_source_url = generate_signed_url(stream.video_url)
+
+
+    # 📦 FALLBACK (old movies without streams)
+    if not video_source_url and not youtube_id:
+
         if movie.video_file:
             video_source_url = movie.video_file.url
+
+        elif movie.video_url:
+
+            if "youtube" in movie.video_url:
+                youtube_id = extract_youtube_id(movie.video_url)
+
+            else:
+                video_source_url = generate_signed_url(movie.video_url)
+
+
+    return render(request, "watch_movie.html", {
+        "movie": movie,
+        "streams": streams,
+        "current_stream": stream,
+        "last_position": last_position,
+        "youtube_id": youtube_id,
+        "video_source_url": video_source_url,
+    })
+    movie = get_object_or_404(Movie, id=movie_id)
+
+    streams = Stream.objects.filter(
+        movie=movie,
+        is_active=True
+    ).order_by('-quality')
+
+
+    # QUALITY SELECTION
+    selected_quality = request.GET.get('quality')
+    stream = None
+
+    if selected_quality:
+        stream = streams.filter(quality=selected_quality).first()
+
+    if not stream:
+        stream = streams.first()
+
+
+    # WATCH HISTORY
+    last_position = 0
+
+    if stream:
+        history, _ = WatchHistory.objects.get_or_create(
+            user=request.user,
+            stream=stream
+        )
+        last_position = history.last_position
+
+
+    youtube_id = None
+    video_source_url = generate_signed_url(stream.video_url)
+
+    # STREAM SOURCE
+    if stream:
+
+        # Uploaded video file
+        if stream.video_file:
+            video_source_url = stream.video_file.url
+
+        # External URL
+        elif stream.video_url:
+
+            # YouTube video
+            if "youtube" in stream.video_url or "youtu.be" in stream.video_url:
+                youtube_id = extract_youtube_id(stream.video_url)
+
+            # HLS / MP4 streaming
+            else:
+                video_source_url = generate_signed_url(stream.video_url)
+
+
+    # FALLBACK FOR OLD MOVIES
+    if not video_source_url and not youtube_id:
+
+        if movie.video_file:
+            video_source_url = movie.video_file.url
+
         elif movie.video_url:
             video_source_url = movie.video_url
 
-    return render(request, 'watch_movie.html', {
-        'movie': movie,
-        'streams': streams,
-        'current_stream': stream,
-        'last_position': last_position,
-        'youtube_id': youtube_id,
-        'video_source_url': video_source_url,
+
+    return render(request, "watch_movie.html", {
+        "movie": movie,
+        "streams": streams,
+        "current_stream": stream,
+        "last_position": last_position,
+        "youtube_id": youtube_id,
+        "video_source_url": video_source_url,
     })
+
+@login_required
+def next_episode(request, movie_id):
+
+    episode = Episode.objects.filter(movie_id=movie_id).first()
+
+    if episode:
+        next_ep = Episode.objects.filter(
+            season=episode.season,
+            number__gt=episode.number
+        ).first()
+
+        if next_ep:
+            return JsonResponse({
+                "next_episode_url": f"/episodes/{next_ep.id}/"
+            })
+
+    return JsonResponse({"next_episode_url": None})
 
 def extract_youtube_id(url):
     """Extract a clean YouTube video ID from any URL"""

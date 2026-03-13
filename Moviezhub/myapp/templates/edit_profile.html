@@ -394,14 +394,16 @@
             <label class="field-wrapper" style="color:#ffd700; font-size: 0.65rem; margin-bottom: 10px;">Visual Avatar</label>
             <div class="image-edit-section">
                  {% if user.profile.profile_picture %}
-            <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
-        {% else %}
-            <img src="{% static 'default_profile_pics/default-profile.png' %}" 
-                alt="Profile" 
-                class="user-avatar shadow">
-        {% endif %}
-                onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=1a1a1a&color=ffd700&size=128';">
-                
+                    <img src="{{ user.profile.profile_picture.url }}" 
+                        alt="Profile" 
+                        class="user-avatar shadow"
+                        onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=1a1a1a&color=ffd700&size=128';">
+                {% else %}
+                    <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771509734/default-profile.jpg" 
+                        alt="Profile" 
+                        class="user-avatar shadow"
+                        onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=1a1a1a&color=ffd700&size=128';">
+                {% endif %}
                 <div class="file-input-wrapper">
                     <input type="file" id="avatar-input" accept="image/*" class="file-input-custom mb-1">
                     <input type="hidden" name="cropped_image" id="cropped-image-data">

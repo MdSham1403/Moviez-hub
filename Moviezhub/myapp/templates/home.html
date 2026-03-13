@@ -223,7 +223,7 @@
         {% if user.profile.profile_picture %}
             <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="user-avatar shadow">
         {% else %}
-            <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1773065676/static/images/logo.png" 
+            <img src="https://res.cloudinary.com/dx6cvs9dk/image/upload/v1771509734/default-profile.jpg" 
                 alt="Default Profile" 
                 class="user-avatar shadow">
         {% endif %}
@@ -237,14 +237,6 @@
             <a href="{% url 'request_movie' %}" class="btn-update">
                 <i class="fas fa-plus-circle"></i> Request
             </a>
-        
-        <!-- 
-            <div class="theme-toggle-box">
-                    <span class="me-2 small">Theme</span>
-                    <input type="checkbox" id="darkModeToggle" style="cursor:pointer;">
-                </div>
-            </div>
-        --> 
     </section>
     <div class="choice-grid">
         <a href="{% url 'explore_movies' %}" class="choice-card">

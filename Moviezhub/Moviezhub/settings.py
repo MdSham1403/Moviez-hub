@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",  # Only list this ONCE
     "cloudinary",  # This can be here
     "myapp",
+    "corsheaders",
     "django.contrib.sites",
     "allauth",
     "allauth.account",
@@ -72,6 +73,7 @@ SITE_ID = 2
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware", 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -226,6 +228,11 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = not DEBUG
+
+BUNNY_CDN_BASE = "https://moviezhub-storage.b-cdn.net"
+BUNNY_TOKEN_KEY = "edac228c-65e9-41cf-b8a4-cc9a95f7ef98"
+BUNNY_TOKEN_PATH = "/Movies/"
+BUNNY_TOKEN_EXPIRY = 3600  # 1 hour
 
 # Custom handlers
 handler404 = "myapp.views.custom_404"
