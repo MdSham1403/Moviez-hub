@@ -3,213 +3,332 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ movie.title }} | MoviezHub</title>
-    <link rel="icon" href="{% static 'favicon32.png' %}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ movie.title }} | MoviezHub</title>
+<link rel="icon" href="{% static 'favicon32.png' %}">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <style>
-        body { background: #0b0b0b; font-family: 'Poppins', sans-serif; color: white; margin: 0; }
-        .player-page { max-width: 1200px; margin: auto; padding: 30px 15px; }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        /* CENTERED TITLE & BOLD */
-        .movie-header-section { text-align: center; margin-bottom: 30px; }
-        .movie-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; color: #fff; text-transform: uppercase; }
-        
-        /* THEATER EFFECT */
-        .player-wrapper { position: relative; padding: 10px 0; }
-        .ambient-glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 95%; height: 85%; background: rgba(229, 9, 20, 0.35);
-            filter: blur(100px); z-index: -1; border-radius: 50%; opacity: 0.6;
-        }
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
 
-        .video-container {
-            background: black; border-radius: 12px; overflow: hidden;
-            box-shadow: 0 0 60px rgba(0,0,0,1); border: 1px solid #222;
-            position: relative; z-index: 1;
-        }
+<style>
 
-        .video-js { width: 100% !important; height: 580px !important; }
-        @media(max-width:768px) { .video-js { height: 230px !important; } }
+body{
+background:#0b0b0b;
+font-family:'Poppins',sans-serif;
+color:white;
+margin:0;
+}
 
-        /* UI ELEMENTS */
-        .vjs-play-progress, .vjs-volume-level { background: #e50914 !important; }
-        .quality-badge { background: #e50914; padding: 4px 12px; border-radius: 4px; font-weight: 600; font-size: 14px; }
+.player-page{
+max-width:1200px;
+margin:auto;
+padding:30px 15px;
+}
 
-        /* METADATA GRID */
-        .movie-meta-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px; margin-top: 30px; padding: 25px;
-            background: #111; border-radius: 12px; border-bottom: 4px solid #e50914;
-        }
-        .meta-item label { display: block; color: #777; font-size: 11px; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
-        .meta-item span { font-weight: 600; color: #fff; font-size: 16px; }
+.movie-header-section{
+text-align:center;
+margin-bottom:30px;
+}
 
-        .action-bar { display: flex; justify-content: center; margin-top: 20px; }
-        .quality-select { 
-            background: #1a1a1a; border: 1px solid #e50914; color: white; 
-            padding: 8px 15px; border-radius: 6px; cursor: pointer;
-        }
+.movie-title{
+font-size:34px;
+font-weight:800;
+margin-bottom:8px;
+color:#fff;
+text-transform:uppercase;
+}
 
-        .movie-info { margin-top: 35px; }
-        .movie-info h4 { color: #e50914; font-weight: 600; }
-        .movie-info p { color: #ccc; line-height: 1.8; }
-    </style>
+.player-wrapper{
+position:relative;
+padding:10px 0;
+}
+
+.ambient-glow{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:95%;
+height:85%;
+background:rgba(229,9,20,0.35);
+filter:blur(100px);
+z-index:-1;
+border-radius:50%;
+opacity:0.6;
+}
+
+.video-container{
+background:black;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 0 60px rgba(0,0,0,1);
+border:1px solid #222;
+position:relative;
+z-index:1;
+}
+
+.video-js{
+width:100%!important;
+height:580px!important;
+}
+
+@media(max-width:768px){
+.video-js{
+height:230px!important;
+}
+}
+
+.vjs-play-progress,
+.vjs-volume-level{
+background:#e50914!important;
+}
+
+.quality-badge{
+background:#e50914;
+padding:4px 12px;
+border-radius:4px;
+font-weight:600;
+font-size:14px;
+}
+
+.movie-meta-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:15px;
+margin-top:30px;
+padding:25px;
+background:#111;
+border-radius:12px;
+border-bottom:4px solid #e50914;
+}
+
+.meta-item label{
+display:block;
+color:#777;
+font-size:11px;
+text-transform:uppercase;
+font-weight:600;
+margin-bottom:6px;
+}
+
+.meta-item span{
+font-weight:600;
+color:#fff;
+font-size:16px;
+}
+
+.action-bar{
+display:flex;
+justify-content:center;
+margin-top:20px;
+}
+
+.quality-select{
+background:#1a1a1a;
+border:1px solid #e50914;
+color:white;
+padding:8px 15px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.movie-info{
+margin-top:35px;
+}
+
+.movie-info h4{
+color:#e50914;
+font-weight:600;
+}
+
+.movie-info p{
+color:#ccc;
+line-height:1.8;
+}
+
+</style>
 </head>
 
 <body>
 
-    <div class="player-page">
-        <div class="mb-4">
-            <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none" style="color: #666; font-weight: 600;">
-                ← EXIT PLAYER
-            </a>
-        </div>
+<div class="player-page">
 
-        <div class="movie-header-section">
-            <h1 class="movie-title">{{ movie.title }}</h1>
-            {% if current_stream %}
-                <span class="quality-badge">{{ current_stream.quality }}</span>
-            {% endif %}
-        </div>
+<div class="mb-4">
+<a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none" style="color:#666;font-weight:600;">
+← EXIT PLAYER
+</a>
+</div>
 
-        <div class="player-wrapper">
-            <div class="ambient-glow"></div>
-            <div class="video-container">
-                {% if video_source_url %}
-                <video id="movie-player" class="video-js vjs-big-play-centered" controls preload="auto"
-                    {% if movie.thumbnail %}poster="{{ movie.thumbnail.url }}"{% endif %}>
-                    <source src="{{ video_source_url }}" type="application/x-mpegURL">
-                </video>
-                {% else %}
-                <div style="padding:100px; text-align:center; background: #000;">
-                    <h5 class="text-danger">Source Not Found</h5>
-                </div>
-                {% endif %}
-            </div>
-        </div>
+<div class="movie-header-section">
+<h1 class="movie-title">{{ movie.title }}</h1>
 
-        <div class="action-bar">
-            {% if streams %}
-            <form method="get" id="qualityForm" class="d-flex align-items-center">
-                <span class="me-3" style="font-weight: 600; color: #888;">QUALITY:</span>
-                <select name="quality" class="quality-select" onchange="this.form.submit()">
-                    {% for s in streams %}
-                        <option value="{{ s.quality }}" {% if current_stream and s.quality == current_stream.quality %}selected{% endif %}>
-                            {{ s.quality }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </form>
-            {% endif %}
-        </div>
+{% if current_stream %}
+<span class="quality-badge">{{ current_stream.quality }}</span>
+{% endif %}
+</div>
 
-        <div class="movie-meta-grid">
-            <div class="meta-item">
-                <label>Year</label>
-                <span>{{ movie.year|default:movie.release_year|default:"N/A" }}</span>
-            </div>
-            <div class="meta-item">
-                <label>Genre</label>
-                <span>
-                    {% if movie.genre.all %}
-                        {{ movie.genre.all|join:", " }}
-                    {% else %}
-                        {{ movie.genre.name|default:movie.genre|default:"General" }}
-                    {% endif %}
-                </span>
-            </div>
-            <div class="meta-item">
-                <label>Category</label>
-                <span>{{ movie.category.name|default:movie.category|default:"Movie" }}</span>
-            </div>
-            <div class="meta-item">
-                    <label>IMDb Rating</label>
-                    <span style="color: #f5c518;">★ {{ movie.rating|default:"8.5" }}</span>
-            </div>
-        </div>
+<div class="player-wrapper">
 
-        <div class="movie-info">
-            <h4>Storyline</h4>
-            <p>{{ movie.description }}</p>
-        </div>
-    </div>
+<div class="ambient-glow"></div>
 
-    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-<script src="https://cdn.sc.gl/videojs-hotkeys/0.2/videojs-hotkeys.min.js"></script>
+<div class="video-container">
 
-<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
+{% if video_source_url %}
+
+<video
+id="movie-player"
+class="video-js vjs-big-play-centered"
+controls
+preload="auto"
+{% if movie.thumbnail %}poster="{{ movie.thumbnail.url }}"{% endif %}
+>
+
+<source src="{{ video_source_url }}" type="application/x-mpegURL">
+
+</video>
+
+{% else %}
+
+<div style="padding:100px;text-align:center;background:#000;">
+<h5 class="text-danger">Source Not Found</h5>
+</div>
+
+{% endif %}
+
+</div>
+</div>
+
+<div class="action-bar">
+
+{% if streams %}
+<form method="get" id="qualityForm" class="d-flex align-items-center">
+
+<span class="me-3" style="font-weight:600;color:#888;">QUALITY:</span>
+
+<select name="quality" class="quality-select" onchange="this.form.submit()">
+
+{% for s in streams %}
+<option value="{{ s.quality }}" {% if current_stream and s.quality == current_stream.quality %}selected{% endif %}>
+{{ s.quality }}
+</option>
+{% endfor %}
+
+</select>
+</form>
+{% endif %}
+
+</div>
+
+<div class="movie-meta-grid">
+
+<div class="meta-item">
+<label>Year</label>
+<span>{{ movie.year|default:movie.release_year|default:"N/A" }}</span>
+</div>
+
+<div class="meta-item">
+<label>Genre</label>
+<span>
+{% if movie.genre.all %}
+{{ movie.genre.all|join:", " }}
+{% else %}
+{{ movie.genre.name|default:movie.genre|default:"General" }}
+{% endif %}
+</span>
+</div>
+
+<div class="meta-item">
+<label>Category</label>
+<span>{{ movie.category.name|default:movie.category|default:"Movie" }}</span>
+</div>
+
+<div class="meta-item">
+<label>IMDb Rating</label>
+<span style="color:#f5c518;">★ {{ movie.rating|default:"8.5" }}</span>
+</div>
+
+</div>
+
+<div class="movie-info">
+<h4>Storyline</h4>
+<p>{{ movie.description }}</p>
+</div>
+
+</div>
+
+<!-- PLAYER SCRIPTS -->
+
 <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/videojs-hotkeys@0.2.30/videojs.hotkeys.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/videojs-http-source-selector@1.1.6/dist/videojs-http-source-selector.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/videojs-vtt-thumbnails@0.1.0/dist/videojs-vtt-thumbnails.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/videojs-chromecast/dist/videojs-chromecast.min.js"></script>
-
-<!-- VideoJS -->
-<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
-<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-
-<!-- Plugins -->
-<script src="https://cdn.jsdelivr.net/npm/videojs-hotkeys@0.2.30/videojs.hotkeys.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/videojs-http-source-selector@1.1.6/dist/videojs-http-source-selector.min.js"></script>
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded",function(){
 
-const config = {
-updateUrl: "{% if current_stream %}{% url 'update_stream_progress' current_stream.stream_id %}{% endif %}",
-startTime: parseFloat("{{ last_position|default:0 }}"),
-csrfToken: "{{ csrf_token }}"
+const config={
+updateUrl:"{% if current_stream %}{% url 'update_stream_progress' current_stream.stream_id %}{% endif %}",
+startTime:parseFloat("{{ last_position|default:0 }}"),
+csrfToken:"{{ csrf_token }}"
 };
 
-const player = videojs('movie-player', {
-fluid: true,
-responsive: true,
-controls: true,
-preload: "auto",
-playbackRates: [0.5,1,1.25,1.5,2]
+const player=videojs('movie-player',{
+fluid:true,
+responsive:true,
+controls:true,
+preload:"auto",
+playbackRates:[0.5,1,1.25,1.5,2]
 });
 
 
-player.ready(function () {
+player.ready(function(){
 
-/* HOTKEYS */
 player.hotkeys({
-volumeStep: 0.1,
-seekStep: 10,
-enableModifiersForNumbers: false,
-alwaysCaptureHotkeys: true,
-captureDocumentHotkeys: true,
-enableNumbers: true,
-enableMute: true,
-enableFullscreen: true
+volumeStep:0.1,
+seekStep:10,
+enableModifiersForNumbers:false,
+alwaysCaptureHotkeys:true,
+captureDocumentHotkeys:true,
+enableNumbers:true,
+enableMute:true,
+enableFullscreen:true
 });
 
-/* Resume playback */
-if (config.startTime > 5) {
-player.currentTime(config.startTime);
+if(player.httpSourceSelector){
+player.httpSourceSelector();
 }
 
-/* Force focus */
-setTimeout(() => {
+player.on("loadedmetadata",function(){
+if(config.startTime>5){
+player.currentTime(config.startTime);
+}
+});
+
+setTimeout(()=>{
 player.el().focus();
 },500);
 
+if(screen.orientation && screen.orientation.lock){
+
+player.on('fullscreenchange',function(){
+
+if(player.isFullscreen()){
+screen.orientation.lock('landscape').catch(()=>{});
+}
+
+});
+
+}
+
 });
 
 
-/* Progress tracking */
-
-if (config.updateUrl) {
+if(config.updateUrl){
 
 setInterval(function(){
 
@@ -232,8 +351,66 @@ position:Math.floor(player.currentTime())
 
 }
 
+
+
+let lastTap=0;
+
+player.el().addEventListener("touchend",function(e){
+
+const currentTime=new Date().getTime();
+const tapLength=currentTime-lastTap;
+
+if(tapLength<300 && tapLength>0){
+
+const width=player.el().clientWidth;
+const tapX=e.changedTouches[0].clientX;
+
+if(tapX<width/2){
+player.currentTime(player.currentTime()-10);
+}else{
+player.currentTime(player.currentTime()+10);
+}
+
+}
+
+lastTap=currentTime;
+
+});
+
+
+let startY=0;
+
+player.el().addEventListener("touchstart",function(e){
+startY=e.touches[0].clientY;
+});
+
+player.el().addEventListener("touchmove",function(e){
+
+let moveY=e.touches[0].clientY;
+let diff=startY-moveY;
+
+if(Math.abs(diff)>30){
+
+let vol=player.volume();
+
+if(diff>0){
+vol+=0.05;
+}else{
+vol-=0.05;
+}
+
+vol=Math.min(1,Math.max(0,vol));
+player.volume(vol);
+
+startY=moveY;
+
+}
+
+});
+
 });
 
 </script>
+
 </body>
 </html>

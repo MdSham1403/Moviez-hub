@@ -46,4 +46,4 @@ gunicorn         # Required to serve the app in production
 #django-anymail[resend]
 requests
 whitenoise==6.11.0
-corsheaders
+django-cors-headers
